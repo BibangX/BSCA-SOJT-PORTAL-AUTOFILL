@@ -1,0 +1,401 @@
+{
+  "version": 1,
+  "fields": {
+    "student_full_name": {
+      "label": "Full legal name",
+      "maxLength": 80,
+      "group": "Student details",
+      "type": "text",
+      "required": true
+    },
+    "student_number": {
+      "label": "Student number",
+      "maxLength": 25,
+      "group": "Student details",
+      "type": "text",
+      "required": true
+    },
+    "school_email": {
+      "label": "School email",
+      "type": "email",
+      "maxLength": 100,
+      "group": "Student details",
+      "required": true
+    },
+    "year_level": {
+      "label": "Year level",
+      "type": "select",
+      "options": [
+        "1st year",
+        "2nd year",
+        "3rd year",
+        "4th year"
+      ],
+      "maxLength": 8,
+      "group": "Academic details",
+      "required": true
+    },
+    "semester": {
+      "label": "Semester",
+      "type": "select",
+      "options": [
+        "1st semester",
+        "2nd semester"
+      ],
+      "maxLength": 12,
+      "group": "Academic details",
+      "required": true
+    },
+    "academic_year": {
+      "label": "Academic year",
+      "maxLength": 9,
+      "placeholder": "2026-2027",
+      "pattern": "^20[0-9]{2}-20[0-9]{2}$",
+      "group": "Academic details",
+      "type": "text",
+      "required": true
+    },
+    "start_date": {
+      "label": "Proposed start date",
+      "type": "date",
+      "maxLength": 10,
+      "group": "Training period",
+      "required": true
+    },
+    "end_date": {
+      "label": "Proposed end date",
+      "type": "date",
+      "maxLength": 10,
+      "group": "Training period",
+      "required": true
+    },
+    "remaining_units": {
+      "label": "Remaining units",
+      "type": "number",
+      "min": 0,
+      "max": 300,
+      "maxLength": 3,
+      "group": "Academic details",
+      "required": true
+    },
+    "adviser_name": {
+      "label": "Year-level adviser",
+      "maxLength": 80,
+      "group": "Academic details",
+      "type": "text",
+      "required": true
+    },
+    "program_of_study_note": {
+      "label": "Program of study attachment reference",
+      "type": "textarea",
+      "maxLength": 160,
+      "required": false,
+      "help": "Optional filename or note identifying your separate program of study attachment.",
+      "group": "Intent details"
+    },
+    "company_name": {
+      "label": "Company legal name",
+      "maxLength": 120,
+      "group": "Company details",
+      "type": "text",
+      "required": true
+    },
+    "company_address": {
+      "label": "Full company address",
+      "type": "textarea",
+      "maxLength": 220,
+      "help": "Include street, barangay, city, province, postal code and country.",
+      "group": "Company details",
+      "required": true
+    },
+    "recipient_name": {
+      "label": "Company representative or recipient name",
+      "maxLength": 80,
+      "group": "Company details",
+      "type": "text",
+      "required": true
+    },
+    "recipient_title": {
+      "label": "Representative or recipient position",
+      "maxLength": 80,
+      "group": "Company details",
+      "type": "text",
+      "required": true
+    },
+    "company_email": {
+      "label": "Company contact email",
+      "type": "email",
+      "maxLength": 100,
+      "group": "Company details",
+      "required": true
+    },
+    "company_phone": {
+      "label": "Company contact telephone",
+      "type": "tel",
+      "maxLength": 35,
+      "group": "Company details",
+      "required": true
+    },
+    "acceptance_link": {
+      "label": "Acceptance evidence Google Drive file link",
+      "type": "url",
+      "maxLength": 200,
+      "group": "Company details",
+      "help": "Direct file link, not a folder link. The document remains in your Drive.",
+      "required": true
+    },
+    "letter_date": {
+      "label": "Letter date",
+      "type": "date",
+      "maxLength": 10,
+      "group": "Endorsement details",
+      "required": true
+    },
+    "required_hours": {
+      "label": "Required training hours",
+      "type": "number",
+      "min": 1,
+      "max": 2000,
+      "maxLength": 4,
+      "help": "Use the hours confirmed by your coordinator; no default is assumed.",
+      "group": "Endorsement details",
+      "required": true
+    }
+  },
+  "templates": [
+    {
+      "id": "intent",
+      "step": "intent",
+      "label": "Intent form",
+      "fields": [
+        "student_full_name",
+        "student_number",
+        "school_email",
+        "year_level",
+        "semester",
+        "academic_year",
+        "start_date",
+        "end_date",
+        "remaining_units",
+        "adviser_name",
+        "program_of_study_note"
+      ],
+      "version": "1.0.0",
+      "status": "sample",
+      "note": "Prepared autofill draft for coordinator review. Check institutional wording and all details before official use.",
+      "docx": "./templates/autofill/intent.docx",
+      "pdf": "./templates/autofill/intent.pdf",
+      "formats": [
+        "docx",
+        "pdf"
+      ],
+      "pdfFields": {
+        "student_full_name": {
+          "width": 456,
+          "height": 30,
+          "multiline": true
+        },
+        "student_number": {
+          "width": 218,
+          "height": 30,
+          "multiline": true
+        },
+        "school_email": {
+          "width": 222,
+          "height": 30,
+          "multiline": true
+        },
+        "year_level": {
+          "width": 140,
+          "height": 20,
+          "multiline": false
+        },
+        "semester": {
+          "width": 140,
+          "height": 20,
+          "multiline": false
+        },
+        "academic_year": {
+          "width": 144,
+          "height": 20,
+          "multiline": false
+        },
+        "start_date": {
+          "width": 218,
+          "height": 20,
+          "multiline": false
+        },
+        "end_date": {
+          "width": 222,
+          "height": 20,
+          "multiline": false
+        },
+        "remaining_units": {
+          "width": 456,
+          "height": 20,
+          "multiline": false
+        },
+        "adviser_name": {
+          "width": 456,
+          "height": 30,
+          "multiline": true
+        },
+        "program_of_study_note": {
+          "width": 456,
+          "height": 44,
+          "multiline": true
+        }
+      }
+    },
+    {
+      "id": "company",
+      "step": "company",
+      "label": "Company information form",
+      "fields": [
+        "student_full_name",
+        "student_number",
+        "company_name",
+        "company_address",
+        "recipient_name",
+        "recipient_title",
+        "company_email",
+        "company_phone",
+        "acceptance_link"
+      ],
+      "version": "1.0.0",
+      "status": "sample",
+      "note": "Prepared autofill draft for coordinator review. Check institutional wording and all details before official use.",
+      "docx": "./templates/autofill/company.docx",
+      "pdf": "./templates/autofill/company.pdf",
+      "formats": [
+        "docx",
+        "pdf"
+      ],
+      "pdfFields": {
+        "student_full_name": {
+          "width": 456,
+          "height": 30,
+          "multiline": true
+        },
+        "student_number": {
+          "width": 456,
+          "height": 20,
+          "multiline": false
+        },
+        "company_name": {
+          "width": 456,
+          "height": 30,
+          "multiline": true
+        },
+        "company_address": {
+          "width": 456,
+          "height": 44,
+          "multiline": true
+        },
+        "recipient_name": {
+          "width": 218,
+          "height": 30,
+          "multiline": true
+        },
+        "recipient_title": {
+          "width": 222,
+          "height": 30,
+          "multiline": true
+        },
+        "company_email": {
+          "width": 218,
+          "height": 30,
+          "multiline": true
+        },
+        "company_phone": {
+          "width": 222,
+          "height": 30,
+          "multiline": true
+        },
+        "acceptance_link": {
+          "width": 456,
+          "height": 44,
+          "multiline": true
+        }
+      }
+    },
+    {
+      "id": "endorsement",
+      "step": "endorsement",
+      "label": "Letter of endorsement",
+      "fields": [
+        "letter_date",
+        "student_full_name",
+        "student_number",
+        "company_name",
+        "company_address",
+        "recipient_name",
+        "recipient_title",
+        "start_date",
+        "end_date",
+        "required_hours"
+      ],
+      "version": "1.0.0",
+      "status": "sample",
+      "note": "Prepared autofill draft for coordinator review. Check institutional wording and all details before official use.",
+      "docx": "./templates/autofill/endorsement.docx",
+      "pdf": "./templates/autofill/endorsement.pdf",
+      "formats": [
+        "docx",
+        "pdf"
+      ],
+      "pdfFields": {
+        "letter_date": {
+          "width": 456,
+          "height": 20,
+          "multiline": false
+        },
+        "recipient_name": {
+          "width": 218,
+          "height": 30,
+          "multiline": true
+        },
+        "recipient_title": {
+          "width": 222,
+          "height": 30,
+          "multiline": true
+        },
+        "company_name": {
+          "width": 456,
+          "height": 30,
+          "multiline": true
+        },
+        "company_address": {
+          "width": 456,
+          "height": 44,
+          "multiline": true
+        },
+        "student_full_name": {
+          "width": 456,
+          "height": 30,
+          "multiline": true
+        },
+        "student_number": {
+          "width": 218,
+          "height": 20,
+          "multiline": false
+        },
+        "required_hours": {
+          "width": 222,
+          "height": 20,
+          "multiline": false
+        },
+        "start_date": {
+          "width": 218,
+          "height": 20,
+          "multiline": false
+        },
+        "end_date": {
+          "width": 222,
+          "height": 20,
+          "multiline": false
+        }
+      }
+    }
+  ]
+}
