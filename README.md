@@ -23,7 +23,12 @@ The three new masters are coordinator-review drafts; endorsement wording/layout 
 PDF values are validated to fit the allocated space. If unusually long text cannot fit legibly, the portal explains the issue and offers Word as the editable alternative. Do not replace a PDF master without updating its field mapping.
 
 ## QA completed
-14 automated checks cover required fields, lengths, dates/leap dates, academic years, Unicode names, zero units, Drive links, escaping, filenames, all six real document outputs and flattened PDFs. All three generated Word documents and PDFs were rendered and inspected. Browser checks covered review confirmation, Word/PDF generation, shared details across levels, phone-sized form layout, and loading under a GitHub-style project subpath. Actual iPhone/Android download behavior still needs testing on the user's devices.
+17 automated checks cover required fields, lengths, dates/leap dates, academic years, Unicode names, zero units, Drive links, escaping, filenames, all six real document outputs and flattened PDFs. All three generated Word documents and PDFs were rendered and inspected. Browser checks covered review confirmation, Word/PDF generation, shared details across levels, phone-sized form layout, and loading under a GitHub-style project subpath. Actual iPhone/Android download behavior still needs testing on the user's devices.
 
 ## Development only
 The deployment is ready to upload; no build is required. To modify the generation engine, use the optional development folder: npm ci, npm test, then npm run build there. Masters are in templates/autofill; manifest.json defines their fields. The source engine is bundled into autofill-engine.js. Keep vendor font and license files.
+
+## Supplied endorsement format update
+The endorsement Word master now uses the supplied inline letter, preserving letterhead, objectives, signature blocks and wording. Its fixed terms are 700 hours, second semester and 18 weeks, as supplied. The portal asks for company, recipient, address, student name, starting date, letter date and typed coordinator/chairperson names/designations. A training department is optional; the company name is used when blank. This prepares an unsigned document and does not grant approval. Word paragraph spacing was normalized to prevent the original file from spilling onto a broken second page. PDF text flows naturally without boxed placeholders; longer content can continue on a second page with clear headers/footers.
+
+This update changes endorsement generation only. Proposed direct information forms/company-status selectors for Levels 1 and 2 remain discussion items.

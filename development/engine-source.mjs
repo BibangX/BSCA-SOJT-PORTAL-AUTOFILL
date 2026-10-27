@@ -14,7 +14,7 @@ export function validateValues(templateId, values, manifest){
  const clean={};
  for(const key of template.fields){
   const rule=manifest.fields[key];if(!rule)throw Error('Document field configuration is incomplete.');
-  const raw=values[key];if(raw!==undefined&&typeof raw!=='string'&&typeof raw!=='number')throw Error('Check '+rule.label+'.');
+  const raw=values[key]||((values[key]===0)?0:(rule.fallback?values[rule.fallback]:undefined));if(raw!==undefined&&typeof raw!=='string'&&typeof raw!=='number')throw Error('Check '+rule.label+'.');
   const v=String(raw??'').trim().normalize('NFC');
   if(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(v))throw Error('Remove unsupported control characters from '+rule.label+'.');
   if(!v&&rule.required!==false)throw Error('Enter '+rule.label+'.');
@@ -46,7 +46,56 @@ function displayValues(clean,manifest){
 function wrapLines(text,font,size,width){
  const lines=[];for(const paragraph of text.split('\n')){let line='';for(const word of paragraph.split(/\s+/)){if(font.widthOfTextAtSize(word,size)>width)return Infinity;const next=line?line+' '+word:word;if(font.widthOfTextAtSize(next,size)>width){lines.push(line);line=word;}else line=next;}lines.push(line);}return lines.length;
 }
-export async function generateDocument({templateId,values,format,manifest,templateBytes,fontBytes}){
+async function generateFlowPdf({template,data,templateBytes,fontBytes,boldFontBytes}){
+ if(!boldFontBytes)throw Error('The letter font could not load. Please retry.');
+ const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);
+ const regular=await pdf.embedFont(fontBytes,{subset:true}),bold=await pdf.embedFont(boldFontBytes,{subset:true});
+ const background=await PDFDocument.load(templateBytes),layout=template.pdfLayout;
+ let page,y;
+ async function newPage(first=false){const [copy]=await pdf.copyPages(background,[0]);page=pdf.addPage(copy);y=first?layout.startY:layout.continuationY;}
+ await newPage(true);
+ function expand(runs){const merged=[];for(const r of runs){const text=r.text.replace(/\{([a-z_]+)\}/g,(_,key)=>{if(!(key in data))throw Error('A letter field is missing.');return data[key];});const last=merged[merged.length-1];if(last&&last.bold===r.bold)last.text+=text;else merged.push({text,bold:r.bold});}return merged;}
+ function linesFor(p){
+  const width=page.getWidth()-layout.left-layout.right-(p.indent||0),size=p.size||10.5;
+  const lines=[];let line=[],lineWidth=0;
+  const push=()=>{while(line.length&&line[line.length-1].space){lineWidth-=line.pop().width;}lines.push({items:line,width:lineWidth});line=[];lineWidth=0;};
+  for(const run of expand(p.runs))for(const chunk of run.text.match(/\n|[^\S\n]+|[^\s]+/g)||[]){
+   if(chunk==='\n'){push();continue;}
+   const space=/^\s+$/.test(chunk),value=space?' ':chunk,font=run.bold?bold:regular;
+   const w=font.widthOfTextAtSize(value,size);
+   if(w>width)throw Error('A value does not fit the letter PDF. Download Word to adjust it.');
+   if(!space&&lineWidth+w>width&&line.length)push();
+   if(space&&!line.length)continue;
+   line.push({value,font,width:w,space});lineWidth+=w;
+  }
+  if(line.length||!lines.length||expand(p.runs).map(r=>r.text).join('').endsWith('\n'))push();
+  return lines;
+ }
+ const paragraphs=layout.paragraphs;
+ for(let i=0;i<paragraphs.length;i++){
+  const p=paragraphs[i];if(p.space){y+=p.space;continue;}
+  const size=p.size||10.5,leading=p.size===11?12.65:layout.lineHeight;
+  let lines=linesFor(p),height=lines.length*leading;
+  // Keep names with their role and department instead of leaving an orphan line.
+  let groupHeight=height;
+  if(p.keepWithNext){let j=i;while(paragraphs[j]?.keepWithNext&&paragraphs[j+1]){j++;const n=paragraphs[j];groupHeight+=n.space||linesFor(n).length*(n.size===11?12.65:layout.lineHeight);}}
+  const bottom=page.getHeight()-layout.bottom;
+  if(y+groupHeight-leading>bottom){await newPage();lines=linesFor(p);height=lines.length*leading;}
+  if(y+height-leading>page.getHeight()-layout.bottom)throw Error('These details do not fit the letter PDF. Download Word to adjust the layout.');
+  lines.forEach((line,index)=>{
+   const available=page.getWidth()-layout.left-layout.right-(p.indent||0),spaces=line.items.filter(x=>x.space).length;
+   let x=p.x??layout.left+(p.indent||0);if(p.align==='center')x+=(available-line.width)/2;
+   const extra=p.align==='justify'&&index<lines.length-1&&spaces?(available-line.width)/spaces:0;
+   if(p.bullet&&index===0)page.drawCircle({x:layout.left+3,y:page.getHeight()-y+3,size:2.1});
+   for(const item of line.items){if(!item.space)page.drawText(item.value,{x,y:page.getHeight()-y,size,font:item.font});x+=item.width+(item.space?extra:0);}
+   y+=leading;
+  });
+ }
+ pdf.setTitle('Letter of Endorsement');pdf.setAuthor('');pdf.setSubject('Prepared from the supplied endorsement template; signatures remain blank');
+ return pdf.save({useObjectStreams:false});
+}
+
+export async function generateDocument({templateId,values,format,manifest,templateBytes,fontBytes,boldFontBytes}){
  if(!['docx','pdf'].includes(format))throw Error('Choose Word or PDF.');
  const clean=validateValues(templateId,values,manifest),data=displayValues(clean,manifest);
  const template=manifest.templates.find(t=>t.id===templateId);
@@ -61,6 +110,7 @@ export async function generateDocument({templateId,values,format,manifest,templa
  }
  if(!fontBytes)throw Error('The document font could not be loaded. Please retry.');
  const face=fontkit.create(fontBytes);for(const value of Object.values(data))for(const char of value){if(!/\s/.test(char)&&!face.hasGlyphForCodePoint(char.codePointAt(0)))throw Error('The PDF print font does not support a character in your details. Download Word to preserve it.');}
+ if(template.pdfMode==='flow')return generateFlowPdf({template,data,templateBytes,fontBytes,boldFontBytes});
  const pdf=await PDFDocument.load(templateBytes);pdf.registerFontkit(fontkit);
  const font=await pdf.embedFont(fontBytes,{subset:true});const form=pdf.getForm();
  const actual=new Set(form.getFields().map(f=>f.getName()));
@@ -87,7 +137,7 @@ async function bytes(url){const r=await fetch(url);if(!r.ok)throw Error('A docum
 export async function prepareDownload(templateId,values,format){
  if(!['docx','pdf'].includes(format))throw Error('Choose Word or PDF.');
  const manifest=await getManifest();validateValues(templateId,values,manifest);const t=manifest.templates.find(t=>t.id===templateId);
- const [templateBytes,fontBytes]=await Promise.all([bytes(new URL(t[format],import.meta.url)),format==='pdf'?bytes(new URL('./vendor/DejaVuSerif.ttf',import.meta.url)):Promise.resolve(null)]);
- let output;try{output=await generateDocument({templateId,values,format,manifest,templateBytes,fontBytes});}catch(e){if(e.message?.includes('fit')||e.message?.includes('print font')||e.message?.startsWith('Enter ')||e.message?.startsWith('Use '))throw e;throw Error('Could not prepare this file. Check your details and retry. '+(e.message?.includes('glyph')?'A character may not be supported by the print font.':''));}
+ const [templateBytes,fontBytes,boldFontBytes]=await Promise.all([bytes(new URL(t[format],import.meta.url)),format==='pdf'?bytes(new URL(t.font||'./vendor/DejaVuSerif.ttf',import.meta.url)):Promise.resolve(null),format==='pdf'&&t.boldFont?bytes(new URL(t.boldFont,import.meta.url)):Promise.resolve(null)]);
+ let output;try{output=await generateDocument({templateId,values,format,manifest,templateBytes,fontBytes,boldFontBytes});}catch(e){if(e.message?.includes('fit')||e.message?.includes('print font')||e.message?.startsWith('Enter ')||e.message?.startsWith('Use '))throw e;throw Error('Could not prepare this file. Check your details and retry. '+(e.message?.includes('glyph')?'A character may not be supported by the print font.':''));}
  return {blob:new Blob([output],{type:format==='pdf'?'application/pdf':'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}),filename:downloadFilename(templateId,values,format)};
 }

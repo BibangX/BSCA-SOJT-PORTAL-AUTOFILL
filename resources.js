@@ -11,7 +11,7 @@ window.OJT_RESOURCES = {
         "Year level, semester, and academic year",
         "Target start and end months, remaining units, and year-level adviser",
         "Program of study with remaining subjects highlighted",
-        "Enter student and company information once in the information form; update the same record when details change"
+        "Complete student information here; company details are entered only in Level 2"
       ],
       "templates": [
         {

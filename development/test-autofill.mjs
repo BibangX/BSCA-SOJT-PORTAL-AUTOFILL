@@ -59,7 +59,9 @@ test('all six Unicode Word/PDF outputs fill mapped values and PDF fields are fla
   const values=valuesFor(t);
   for(const format of ['docx','pdf']){
    const templateBytes=new Uint8Array(await readFile(path.join(root,t[format])));
-   const bytes=await generateDocument({templateId:t.id,values,format,manifest,templateBytes,fontBytes});
+   const selectedFont=t.font?new Uint8Array(await readFile(path.join(root,t.font))):fontBytes;
+   const boldFontBytes=t.boldFont?new Uint8Array(await readFile(path.join(root,t.boldFont))):undefined;
+   const bytes=await generateDocument({templateId:t.id,values,format,manifest,templateBytes,fontBytes:selectedFont,boldFontBytes});
    assert.ok(bytes.length>1000,`${t.id}.${format} must contain an actual document`);
    await writeFile(path.join(output,t.id+'.'+format),bytes);
    if(format==='docx'){
@@ -99,4 +101,38 @@ test('unsupported PDF font characters fail clearly while editable Word preserves
  const fontBytes=await readFile(path.join(root,'vendor/DejaVuSerif.ttf'));
  await assert.rejects(()=>generateDocument({templateId:t.id,values,format:'pdf',manifest,templateBytes:undefined,fontBytes}),/print font/);
  const output=await generateDocument({templateId:t.id,values,format:'docx',manifest,templateBytes:await readFile(path.join(root,t.docx))});assert.ok(new PizZip(output).file('word/document.xml').asText().includes('🧭'));
+});
+
+test('supplied endorsement keeps original inline wording, repeats values and contains no form tables',async()=>{
+ const t=templates.find(t=>t.id==='endorsement');
+ assert.ok(!t.fields.includes('required_hours'),'700 training hours are fixed institutional wording in this template');
+ const values={...valuesFor(t),recipient_name:'Dr. Elena María Cruz',company_name:'Example Research Office',placement_department:'Research and Development Department',coordinator_title:'Asst. Prof.',coordinator_name:'Excel Van O. Jondonero',chairperson_title:'Asst. Prof.',chairperson_name:'Paul Rodolf P. Castor'};
+ const bytes=await generateDocument({templateId:t.id,values,format:'docx',manifest,templateBytes:await readFile(path.join(root,t.docx))});
+ const xml=new PizZip(bytes).file('word/document.xml').asText();
+ const plain=xml.replace(/<[^>]+>/g,'').replace(/&apos;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+ assert.equal((xml.match(/<w:tbl[ >]/g)||[]).length,0,'letter must keep its inline paragraphs rather than turn into a boxed form');
+ assert.equal((plain.match(/700 hours/g)||[]).length,2);assert.ok(plain.includes('second semester'));assert.ok(plain.includes('18 weeks'));
+ assert.equal((plain.match(/Dr\. Elena María Cruz/g)||[]).length,2,'recipient must appear in address block and salutation');
+ assert.equal((plain.match(/November 1, 2026/g)||[]).length,2,'starting date must fill both narrative occurrences');
+ for(const phrase of ['To know more of the','To perform simulations and practical aids','To see a step-by-step demonstration','To prove by actual assessments'])assert.ok(plain.includes(phrase),`missing original objective ${phrase}`);
+ for(const value of [fixture.student_full_name,values.company_name,values.placement_department,values.coordinator_name,values.chairperson_name])assert.ok(plain.includes(value),`missing mapped value ${value}`);
+ assert.ok(!/\{(?:Date|office|name|address|starting date|student name|Office\/Department|coordinator name|chairperson name)\}/.test(plain));
+});
+test('endorsement designation dropdowns reject unlisted titles',()=>{
+ const t=templates.find(t=>t.id==='endorsement');
+ for(const key of ['coordinator_title','chairperson_title']){assert.ok(t.fields.includes(key));assert.ok(Array.isArray(manifest.fields[key].options));assert.throws(()=>validateValues(t.id,{...valuesFor(t),[key]:'Unlisted Signatory Role'},manifest));}
+});
+
+test('endorsement optional department reuses company name and long values produce complete paginated files',async()=>{
+ const t=templates.find(t=>t.id==='endorsement');
+ const values={...valuesFor(t),placement_department:'',company_name:'Example Research Office'};
+ const docx=await generateDocument({templateId:t.id,values,format:'docx',manifest,templateBytes:await readFile(path.join(root,t.docx))});
+ const xml=new PizZip(docx).file('word/document.xml').asText();assert.equal((xml.match(/Example Research Office/g)||[]).length,2,'office/department fallback must not leave a blank in the request');
+ const long={...valuesFor(t),student_full_name:'María Elena Dela Peña O’Connor '.repeat(3).slice(0,80),recipient_name:'Dr. María Elena Santos Dela Cruz '.repeat(3).slice(0,80),company_name:'International Research and Development Applications Company '.repeat(3).slice(0,120),company_address:'123 Research Avenue, Barangay Poblacion, Iligan City, Lanao del Norte, Philippines '.repeat(3).slice(0,220),placement_department:'Research Development and Applications Department '.repeat(3).slice(0,120),coordinator_title:'Asst. Prof.',coordinator_name:'Excel Van O. Jondonero '.repeat(4).slice(0,80),chairperson_title:'Assoc. Prof.',chairperson_name:'Paul Rodolf P. Castor '.repeat(4).slice(0,80)};
+ const {writeFile}=await import('node:fs/promises');
+ for(const format of ['docx','pdf']){
+  const bytes=await generateDocument({templateId:t.id,values:long,format,manifest,templateBytes:await readFile(path.join(root,t[format])),fontBytes:await readFile(path.join(root,t.font)),boldFontBytes:await readFile(path.join(root,t.boldFont))});
+  await writeFile(path.resolve(root,'../autofill-work/qa-generated/endorsement-long.'+format),bytes);
+  if(format==='pdf'){const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>=1&&pdf.getPageCount()<=3,'bounded long-value letter must paginate without excessive pages');assert.equal(pdf.getForm().getFields().length,0);}
+ }
 });

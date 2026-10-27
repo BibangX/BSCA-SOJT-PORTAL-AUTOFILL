@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "fields": {
     "student_full_name": {
       "label": "Full legal name",
@@ -160,6 +160,63 @@
       "help": "Use the hours confirmed by your coordinator; no default is assumed.",
       "group": "Endorsement details",
       "required": true
+    },
+    "placement_department": {
+      "label": "Training office or department",
+      "type": "text",
+      "required": false,
+      "fallback": "company_name",
+      "maxLength": 120,
+      "group": "Company details",
+      "help": "Leave blank to use the company name. Enter a department only when applicable."
+    },
+    "coordinator_title": {
+      "label": "Coordinator designation",
+      "type": "select",
+      "options": [
+        "Mr.",
+        "Ms.",
+        "Dr.",
+        "Instr.",
+        "Asst. Prof.",
+        "Assoc. Prof.",
+        "Prof."
+      ],
+      "maxLength": 12,
+      "group": "Institutional signatories",
+      "required": true,
+      "help": "Use the designation confirmed by the department."
+    },
+    "coordinator_name": {
+      "label": "Coordinator name",
+      "type": "text",
+      "required": true,
+      "maxLength": 80,
+      "group": "Institutional signatories",
+      "help": "Typed name only. This does not sign or approve the letter."
+    },
+    "chairperson_title": {
+      "label": "Chairperson designation",
+      "type": "select",
+      "options": [
+        "Mr.",
+        "Ms.",
+        "Dr.",
+        "Instr.",
+        "Asst. Prof.",
+        "Assoc. Prof.",
+        "Prof."
+      ],
+      "maxLength": 12,
+      "group": "Institutional signatories",
+      "required": true
+    },
+    "chairperson_name": {
+      "label": "Chairperson name",
+      "type": "text",
+      "required": true,
+      "maxLength": 80,
+      "group": "Institutional signatories"
     }
   },
   "templates": [
@@ -325,77 +382,440 @@
       "label": "Letter of endorsement",
       "fields": [
         "letter_date",
-        "student_full_name",
-        "student_number",
         "company_name",
-        "company_address",
         "recipient_name",
-        "recipient_title",
+        "company_address",
+        "student_full_name",
         "start_date",
-        "end_date",
-        "required_hours"
+        "placement_department",
+        "coordinator_title",
+        "coordinator_name",
+        "chairperson_title",
+        "chairperson_name"
       ],
-      "version": "1.0.0",
-      "status": "sample",
-      "note": "Prepared autofill draft for coordinator review. Check institutional wording and all details before official use.",
+      "version": "2.0.0",
+      "status": "provided",
+      "note": "Uses the coordinator-supplied letter format. The wording specifies 700 hours, second semester and 18 weeks. Confirm all details and obtain the required signatures.",
       "docx": "./templates/autofill/endorsement.docx",
       "pdf": "./templates/autofill/endorsement.pdf",
       "formats": [
         "docx",
         "pdf"
       ],
-      "pdfFields": {
-        "letter_date": {
-          "width": 456,
-          "height": 20,
-          "multiline": false
-        },
-        "recipient_name": {
-          "width": 218,
-          "height": 30,
-          "multiline": true
-        },
-        "recipient_title": {
-          "width": 222,
-          "height": 30,
-          "multiline": true
-        },
-        "company_name": {
-          "width": 456,
-          "height": 30,
-          "multiline": true
-        },
-        "company_address": {
-          "width": 456,
-          "height": 44,
-          "multiline": true
-        },
-        "student_full_name": {
-          "width": 456,
-          "height": 30,
-          "multiline": true
-        },
-        "student_number": {
-          "width": 218,
-          "height": 20,
-          "multiline": false
-        },
-        "required_hours": {
-          "width": 222,
-          "height": 20,
-          "multiline": false
-        },
-        "start_date": {
-          "width": 218,
-          "height": 20,
-          "multiline": false
-        },
-        "end_date": {
-          "width": 222,
-          "height": 20,
-          "multiline": false
-        }
-      }
+      "pdfMode": "flow",
+      "pdfLayout": {
+        "left": 90,
+        "right": 87,
+        "startY": 104.9,
+        "bottom": 68,
+        "lineHeight": 12.074,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "  LETTER OF ENDORSEMENT",
+                "bold": true
+              }
+            ],
+            "align": "left",
+            "size": 11,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false,
+            "x": 196.89967
+          },
+          {
+            "space": 11.5
+          },
+          {
+            "space": 11.5
+          },
+          {
+            "runs": [
+              {
+                "text": "{letter_date}",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "{company_name}",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "runs": [
+              {
+                "text": "{recipient_name}\n{company_address}",
+                "bold": false
+              },
+              {
+                "text": "\n",
+                "bold": true
+              }
+            ],
+            "align": "left",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "Dear ",
+                "bold": false
+              },
+              {
+                "text": "{recipient_name}",
+                "bold": false
+              },
+              {
+                "text": ":",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "Our students in Bachelor of Scienc",
+                "bold": false
+              },
+              {
+                "text": "e in Computer Applications (BSCA) will undergo an In-plant training for 700 hours this coming second semester, ",
+                "bold": false
+              },
+              {
+                "text": "{start_date}",
+                "bold": true
+              },
+              {
+                "text": ".",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "In lieu of this, we would like to request your good office to allow ",
+                "bold": false
+              },
+              {
+                "text": "{student_full_name}",
+                "bold": true
+              },
+              {
+                "text": " BSCA students to have their SOJT program",
+                "bold": false
+              },
+              {
+                "text": " at",
+                "bold": false
+              },
+              {
+                "text": " ",
+                "bold": false
+              },
+              {
+                "text": "{placement_department} ",
+                "bold": true
+              },
+              {
+                "text": "under your guidance. We would be extremely grateful if you could accept them at your office.",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "Our IPT program aims for our students to achieve the following:",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "runs": [
+              {
+                "text": "To know more of the \"theory\" component of their course in an \"actual setting\" so they may understand the nature of work in their chosen field of specialization.",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 18,
+            "bullet": true,
+            "keepWithNext": false
+          },
+          {
+            "runs": [
+              {
+                "text": "To perform simulations and practical aids and allow them to rapidly and safely develop skills that are applicable to doing actual routine jobs together with your personnel.",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 18,
+            "bullet": true,
+            "keepWithNext": false
+          },
+          {
+            "runs": [
+              {
+                "text": "To see a step-by-step demonstration of procedures that shows them the task being performed, as if they were doing the actual critical jobs.",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 18,
+            "bullet": true,
+            "keepWithNext": false
+          },
+          {
+            "runs": [
+              {
+                "text": "To prove by actual assessments of the challenges in jobs related to their chosen field, especially when supported by supervised practical tests of skills carried out in the workplace.",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 18,
+            "bullet": true,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "The training program starts upon arrival in your workplace and your acceptance of our student in",
+                "bold": false
+              },
+              {
+                "text": " ",
+                "bold": false
+              },
+              {
+                "text": "{start_date}",
+                "bold": true
+              },
+              {
+                "text": " ",
+                "bold": false
+              },
+              {
+                "text": "(700 hours or 18 weeks). ",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "Thank you. ",
+                "bold": false
+              }
+            ],
+            "align": "left",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": "Respectfully yours,",
+                "bold": false
+              }
+            ],
+            "align": "left",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": true
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": " {coordinator_title} {coordinator_name}",
+                "bold": true
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": true
+          },
+          {
+            "runs": [
+              {
+                "text": "SOJT Coordinator, ",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": true
+          },
+          {
+            "runs": [
+              {
+                "text": "Computer Applications Department",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "space": 12.074
+          },
+          {
+            "runs": [
+              {
+                "text": " {chairperson_title} {chairperson_name}",
+                "bold": true
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": true
+          },
+          {
+            "runs": [
+              {
+                "text": "Department Chairperson, ",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": true
+          },
+          {
+            "runs": [
+              {
+                "text": "Computer Applications Department",
+                "bold": false
+              }
+            ],
+            "align": "justify",
+            "size": 10.5,
+            "indent": 0,
+            "bullet": false,
+            "keepWithNext": false
+          }
+        ],
+        "continuationY": 114
+      },
+      "font": "./vendor/LiberationSans-Regular.ttf",
+      "boldFont": "./vendor/LiberationSans-Bold.ttf"
     }
   ]
 }
