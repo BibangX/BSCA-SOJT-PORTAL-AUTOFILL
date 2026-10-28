@@ -8,7 +8,7 @@ import {validateValues,generateDocument} from '../autofill-engine.js';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const manifest=JSON.parse(await readFile(path.join(root,'templates/autofill/manifest.json'),'utf8'));
 const template=id=>{const t=manifest.templates.find(t=>t.id===id);assert.ok(t,`${id} manifest entry exists`);return t;};
-const fixture={student_full_name:'María Dela Peña',student_number:'2026-00123',company_name:'Example Systems & Research',company_address:'123 Sample Street, Iligan City, Lanao del Norte, Philippines',recipient_name:'Ana Cruz',recipient_title:'Human Resources Manager',dean_title:'Atty.',dean_name:'Sample College Dean',chairperson_title:'Asst. Prof.',chairperson_name:'Sample Chairperson',coordinator_title:'Asst. Prof.',coordinator_name:'Sample Coordinator',additional_student_2:'',additional_student_3:'',event_title:'Supervised On-the-Job Training',waiver_duration:'November 1, 2026 to February 28, 2027',guardian_name:"Rosa O'Connor"};
+const fixture={dean_pronouns:'she/her',recipient_pronouns:'he/him',student_full_name:'María Dela Peña',student_number:'2026-00123',company_name:'Example Systems & Research',company_address:'123 Sample Street, Iligan City, Lanao del Norte, Philippines',recipient_name:'Ana Cruz',recipient_title:'Human Resources Manager',dean_title:'Atty.',dean_name:'Sample College Dean',chairperson_title:'Asst. Prof.',chairperson_name:'Sample Chairperson',coordinator_title:'Asst. Prof.',coordinator_name:'Sample Coordinator',additional_student_2:'',additional_student_3:'',event_title:'Supervised On-the-Job Training',waiver_duration:'November 1, 2026 to February 28, 2027',guardian_name:"Rosa O'Connor"};
 const docText=bytes=>execFileSync('python3',['-c',`import sys,io,zipfile,xml.etree.ElementTree as E
 z=zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read()))
 r=E.fromstring(z.read('word/document.xml'))
@@ -90,5 +90,41 @@ test('configured PDF downloads generate readable files and no unresolved fields'
   const text=execFileSync('pdftotext',[filename,'-'],{encoding:'utf8'});
   for(const key of t.fields)assert.ok(!text.includes('{'+key+'}'),`${id} PDF unresolved ${key}`);
   assert.ok(text.includes(fixture.student_full_name));assert.ok(text.includes(fixture.dean_name));
+ }
+});
+
+test('MOA pronouns are required and never inferred from names or designations',()=>{
+ for(const key of ['dean_pronouns','recipient_pronouns']){
+  assert.throws(()=>validateValues('moa',{...fixture,[key]:''},manifest));
+  assert.throws(()=>validateValues('moa',{...fixture,[key]:'guess'},manifest));
+ }
+});
+test('MOA Word acknowledgment uses each selected pronoun and plural joint reference',async()=>{
+ for(const [choice,possessive] of [['he/him','his'],['she/her','her'],['they/them','their']]){
+  const text=docText(await generate('moa',{...fixture,dean_pronouns:choice,recipient_pronouns:choice}));
+  assert(text.includes('in '+possessive+' capacity as College Dean'));
+  assert(text.includes('in '+possessive+' capacity as the'));
+  assert(text.includes('their own free and voluntary act on behalf of the parties they represent.'));
+  assert(!text.includes(choice));
+ }
+});
+test('all MOA party and signature paragraphs are centered inside their cells',async()=>{
+ const bytes=await generate('moa');
+ const counts=execFileSync('python3',['-c',`import sys,io,zipfile,xml.etree.ElementTree as E
+r=E.fromstring(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read('word/document.xml'))
+ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+ps=[p for p in r.findall('.//w:tbl//w:p',ns) if ''.join(t.text or '' for t in p.findall('.//w:t',ns)).strip()]
+assert ps
+assert all(p.find('w:pPr/w:jc',ns) is not None and p.find('w:pPr/w:jc',ns).get('{'+ns['w']+'}val')=='center' for p in ps)
+print(len(ps))`],{input:Buffer.from(bytes),encoding:'utf8'});assert(Number(counts)>0);
+});
+test('MOA PDF acknowledgment uses selected pronouns independently',async()=>{
+ const out=path.join(root,'development/qa-moa-waiver');await mkdir(out,{recursive:true});
+ for(const [dean,rep,dp,rp] of [['he/him','she/her','his','her'],['she/her','they/them','her','their'],['they/them','he/him','their','his']]){
+  const bytes=await generate('moa',{...fixture,dean_pronouns:dean,recipient_pronouns:rep},'pdf');
+  const filename=path.join(out,'pronouns.pdf');await writeFile(filename,bytes);
+  const text=execFileSync('pdftotext',[filename,'-'],{encoding:'utf8'}).replace(/\s+/g,' ');
+  assert(text.includes('in '+dp+' capacity as College Dean'));
+  assert(text.includes('in '+rp+' capacity as the'));
  }
 });

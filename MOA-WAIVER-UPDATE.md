@@ -11,3 +11,6 @@ Designation dropdowns include Atty. Names are entered without repeating titles. 
 Browser-only saving is unchanged. Downloading is not submitting or approval. Upload signed completed files to Drive and submit the direct file link as instructed. This patch does not alter Google Forms or their document-type choices; the coordinator must confirm the forms provide the appropriate choice for a waiver if it is required.
 
 QA: 30 automated checks passed; Word/PDF generation and normal/long fixture layouts inspected. MOA five pages and waiver one page for tested realistic inputs; longer entries can change pagination. Browser review/download routes and shared values checked. Physical mobile testing not performed.
+
+## MOA centering and pronouns correction
+Both party/signature columns are centered within their existing widths in Word and PDF. Required Dean pronouns and Company representative pronouns dropdowns offer he/him, she/her and they/them. Each choice generates his, her or their in the acknowledgment. Nothing is inferred from names or titles. The joint reference uses plural their/they. Saved information from older versions loads normally; choose the two new values before generating a new MOA. Already downloaded files do not change automatically.

@@ -283,6 +283,32 @@
       "group": "Waiver details",
       "required": true,
       "help": "Typed name only. The parent or guardian must sign separately."
+    },
+    "dean_pronouns": {
+      "label": "Dean pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": true,
+      "group": "Institutional signatories",
+      "help": "Choose the person’s pronouns. The agreement uses his, her or their as appropriate; never inferred from a name or title."
+    },
+    "recipient_pronouns": {
+      "label": "Company representative pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": true,
+      "group": "Company details",
+      "help": "Choose the person’s pronouns. The agreement uses his, her or their as appropriate; never inferred from a name or title."
     }
   },
   "templates": [
@@ -902,7 +928,9 @@
         "coordinator_title",
         "coordinator_name",
         "additional_student_2",
-        "additional_student_3"
+        "additional_student_3",
+        "dean_pronouns",
+        "recipient_pronouns"
       ],
       "note": "Uses your supplied MOA. Program hours and the Special Order reference are retained. Confirm these with the coordinator; signatures, execution dates and notarial details remain for authorized completion.",
       "formats": [
@@ -1487,13 +1515,15 @@
                   "text": "MSU-ILIGAN INSTITUTE OF TECHNOLOGY",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "First Party",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ],
               [
@@ -1501,13 +1531,15 @@
                   "text": "{company_name}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "Second Party",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ]
             ],
@@ -1523,13 +1555,15 @@
                   "text": "{dean_title} {dean_name}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "College Dean, CCS",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ],
               [
@@ -1537,13 +1571,15 @@
                   "text": "{recipient_name}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "{recipient_title}",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ]
             ],
@@ -1559,19 +1595,22 @@
                   "text": "{chairperson_title} {chairperson_name}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "Chairperson, Computer Applications",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "Department",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ],
               [
@@ -1579,13 +1618,15 @@
                   "text": "{student_full_name}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "Student Trainee",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ]
             ],
@@ -1601,13 +1642,15 @@
                   "text": "{coordinator_title} {coordinator_name}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 },
                 {
                   "text": "SOJT Coordinator",
                   "bold": false,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ],
               [
@@ -1615,7 +1658,8 @@
                   "text": "{#additional_student_2}{additional_student_2}\nStudent Trainee{/additional_student_2}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ]
             ],
@@ -1632,7 +1676,8 @@
                   "text": "{#additional_student_3}{additional_student_3}\nStudent Trainee{/additional_student_3}",
                   "bold": true,
                   "size": 12,
-                  "leading": 20.7
+                  "leading": 20.7,
+                  "align": "center"
                 }
               ]
             ],
@@ -1697,7 +1742,7 @@
                 "bold": false
               },
               {
-                "text": " with ID  No. ___________________ issued at _________________, in his capacity as College Dean of CCS  and ",
+                "text": " with ID  No. ___________________ issued at _________________, in {dean_pronouns} capacity as College Dean of CCS  and ",
                 "bold": false
               },
               {
@@ -1713,7 +1758,7 @@
                 "bold": false
               },
               {
-                "text": " issued at ____________, in her capacity as the ",
+                "text": " issued at ____________, in {recipient_pronouns} capacity as the ",
                 "bold": false
               },
               {
@@ -1721,7 +1766,7 @@
                 "bold": true
               },
               {
-                "text": " Known to me to be the same persons who executed the foregoing instruments and they acknowledged to me that the same is his own free and voluntary act of the Institute he represent.",
+                "text": " Known to me to be the same persons who executed the foregoing instruments and they acknowledged to me that the same is their own free and voluntary act on behalf of the parties they represent.",
                 "bold": false
               }
             ],

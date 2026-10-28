@@ -47,7 +47,7 @@ export function downloadFilename(templateId,values,format){
  return [safe(values.student_number)||'Student',safe(values.student_full_name)||'Document',safe(templateId)||'Template'].join('_')+'.'+format;
 }
 function displayValues(clean,manifest){
- return Object.fromEntries(Object.entries(clean).map(([key,v])=>[key,manifest.fields[key].type==='date'&&v?new Intl.DateTimeFormat('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}).format(new Date(v+'T00:00:00Z')):v]));
+ return Object.fromEntries(Object.entries(clean).map(([key,v])=>[key,['dean_pronouns','recipient_pronouns'].includes(key)?({'he/him':'his','she/her':'her','they/them':'their'}[v]||v):manifest.fields[key].type==='date'&&v?new Intl.DateTimeFormat('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}).format(new Date(v+'T00:00:00Z')):v]));
 }
 function wrapLines(text,font,size,width){
  const lines=[];for(const paragraph of text.split('\n')){let line='';for(const word of paragraph.split(/\s+/)){if(font.widthOfTextAtSize(word,size)>width)return Infinity;const next=line?line+' '+word:word;if(font.widthOfTextAtSize(next,size)>width){lines.push(line);line=word;}else line=next;}lines.push(line);}return lines.length;
