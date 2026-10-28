@@ -2,7 +2,8 @@ import {applicationStatuses,workflowProgress,companyKeys} from './workflow-model
 /* Browser-only document preparation. No student details are sent to a server. */
 const manifestUrl = new URL('./templates/autofill/manifest.json', import.meta.url);
 const storageKey = 'bsca-sojt-document-details-v1';
-const supportedSteps = new Set(['intent', 'company', 'endorsement']);
+const supportedSteps = new Set(['intent', 'company', 'endorsement', 'moa', 'preparation']);
+const documentViews={endorsement:{id:'endorsement',heading:'Create your endorsement letter',action:'Prefill my letter →',blank:'endorsement-letter.docx'},moa:{id:'moa',heading:'Create your MOA',action:'Prefill my MOA →',blank:'moa.docx'},preparation:{id:'waiver',heading:'Prepare the optional liability waiver',action:'Prefill my waiver →',blank:'liability-waiver.docx'}};
 const state = {manifest:null, values:{}, remember:false, storageMessage:'', loading:null};
 const confirmations={};
 const workflowKeys=['application_status','company_source'];
@@ -43,14 +44,18 @@ function mount(){
 }
 function createView(article){
  const workflow=['intent','company'].includes(article.id);
+ const documentView=documentViews[article.id];
+ const prepareLabel=workflow?'Open information form':documentView.action;
  const section=node('section',undefined,'autofill-panel');section.setAttribute('aria-labelledby','autofill-heading-'+article.id);
- const heading=node('h4',workflow?(article.id==='intent'?'Your information and intent':'Your company application'):'Create your endorsement letter');heading.id='autofill-heading-'+article.id;
+ const heading=node('h4',workflow?(article.id==='intent'?'Your information and intent':'Your company application'):documentView.heading);heading.id='autofill-heading-'+article.id;
  const intro=node('p','Recommended: use your saved Level 1 and 2 details, complete the remaining fields, then review and download your filled Word or PDF. Signatures and official approval sections stay blank.','autofill-intro');
  if(workflow){intro.textContent='Save a draft anytime, then confirm complete information. Details are reused in later documents. This public portal saves only in this tab unless you enable device saving.';article.querySelector('.resource-submit')?.remove();article.querySelector('.resource-step-actions')?.remove();}
- const prepare=node('button',workflow?'Open information form':'Prefill my letter →','resource-action');prepare.type='button';prepare.setAttribute('aria-expanded','false');prepare.setAttribute('aria-controls','autofill-editor-'+article.id);
+ const prepare=node('button',prepareLabel,'resource-action');prepare.type='button';prepare.setAttribute('aria-expanded','false');prepare.setAttribute('aria-controls','autofill-editor-'+article.id);
  const editor=node('div',undefined,'autofill-editor');editor.id='autofill-editor-'+article.id;editor.hidden=true;
  const status=node('p','','autofill-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  section.append(heading,intro,prepare,editor,status);
+ if(article.id==='preparation'){intro.textContent='Use this only if the coordinator confirms a liability waiver is required. It does not replace parent or guardian consent or medical clearance. Prefill uses saved student and dean details; signatures and notarial entries stay blank.';}
+ else if(article.id==='moa'){intro.textContent='Reuse saved company, student and institutional details. Add additional students only when the same MOA covers them. Review, download, and arrange the required signatures and notarization separately.';}
  const body=article.querySelector('.resource-step-body'),submit=article.querySelector('.resource-submit');
  if(!workflow){
   body?.classList.add('autofill-guided-layout');
@@ -59,26 +64,50 @@ function createView(article){
   const alternative=node('details',undefined,'autofill-manual');
   alternative.append(node('summary','Prefer to fill it manually? Download the blank template'));
   alternative.append(node('p','Optional alternative: this Word template has empty placeholders. Fill every required detail yourself before printing and signing.','template-note'));
-  if(materials){for(const link of [...materials.querySelectorAll('a[download]')]){link.textContent='Download blank Word template';alternative.append(link);}materials.remove();}
+  if(materials){
+   const mapped=[...materials.querySelectorAll('a[download]')].find(link=>link.getAttribute('href')?.split('/').pop()===documentView.blank);
+   if(mapped){const oldNote=mapped.nextElementSibling;mapped.textContent='Download blank Word template';alternative.append(mapped);if(oldNote?.classList.contains('template-note'))oldNote.remove();}
+   if(materials.querySelector('a[download]')){materials.classList.add('autofill-other-materials');const title=materials.querySelector('h4');if(title)title.textContent=article.id==='preparation'?'Other pre-deployment requirements':'Internship plan';materials.append(node('p','These documents do not have prefill available yet. Download the template and complete it as instructed.','template-note'));}
+   else materials.remove();
+  }
   section.append(alternative);
  }
- (body||article).append(section);
+ const remainingMaterials=article.querySelector('.autofill-other-materials');
+ (body||article).append(section);if(remainingMaterials)(body||article).append(remainingMaterials);
  if(submit){submit.classList.add('autofill-submit');if(!workflow){submit.prepend(node('h4','After downloading: sign and submit'));submit.prepend(node('p','Finish your document','autofill-route'));} (body||article).append(submit);}
- let built=false, expanded=false, busy=false, template, form, preview, controls=[],rememberInput, storageNote;
+ let built=false, expanded=false, busy=false, template, form, preview, controls=[],rememberInput, storageNote, extraStudents=0;
  function setStatus(message){status.textContent=message;}
  function invalidate(){if(preview)preview.hidden=true;}
  function progress(){if(!workflow)return;const result=workflowProgress(article.id,state.values,confirmations[article.id]);window.dispatchEvent(new CustomEvent('sojt-workflow-progress',{detail:{step:article.id,...result}}));}
- function changed(){if(!workflow){confirmations.intent=false;confirmations.company=false;}if(workflow){confirmations[article.id]=false;if(article.id==='company')confirmations.endorsement=false;}progress();}
+ function changed(key){
+  const affected=new Set();
+  if(key){for(const id of ['intent','company'])if(state.manifest?.templates.find(t=>t.id===id)?.fields.includes(key))affected.add(id);}
+  else if(workflow)affected.add(article.id);
+  for(const id of affected){confirmations[id]=false;const result=workflowProgress(id,state.values,false);window.dispatchEvent(new CustomEvent('sojt-workflow-progress',{detail:{step:id,...result}}));}
+  progress();
+ }
+ function seedWaiverDuration(){
+  if(template?.id!=='waiver'||state.values.waiver_duration?.trim())return;
+  const dates=[state.values.start_date,state.values.end_date];
+  if(!dates.every(value=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value)||dates[1]<dates[0])return;
+  const format=new Intl.DateTimeFormat('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'});
+  state.values.waiver_duration=dates.map(value=>format.format(new Date(value+'T00:00:00Z'))).join(' to ');saveRemembered();
+ }
+
  function updateStorageUi(){if(rememberInput)rememberInput.checked=state.remember;if(storageNote)storageNote.textContent=state.storageMessage||'Leaving this page clears unsaved details. Shared computers should keep this option off.';}
- function updateValues(){for(const [key,input]of controls){if(input!==document.activeElement)input.value=state.values[key]||'';}updateStorageUi();invalidate();}
- function getTemplate(){return state.manifest?.templates.find(t=>templateStep(t)===article.id);}
+ function updateValues(){seedWaiverDuration();for(const [key,input]of controls){if(input!==document.activeElement)input.value=state.values[key]||'';}updateStorageUi();invalidate();}
+ function getTemplate(){return state.manifest?.templates.find(t=>workflow?templateStep(t)===article.id:t.id===documentView.id);}
  function build(){
   template=getTemplate();editor.replaceChildren();controls=[];
-  if(!template){editor.append(node('p','Autofill is not available for this document yet. You can still download the blank template above.'));return;}
+  if(!template){editor.append(node('p','Autofill is not available for this document yet. You can still download the blank template below.'));return;}
+  seedWaiverDuration();
   editor.append(node('p',templateLabel(template),'autofill-document-title'));
+  if(template.fields.includes('dean_name'))editor.append(node('p','Institutional names and designations are reused across these documents. Select the designation separately (including Atty.); enter the name without repeating its title. Confirm the current signatories with the department.','autofill-storage-note'));
   const templateNote=template.note||((template.status==='approved')?'':'Prepared sample for coordinator review. Confirm the wording before official use.');if(templateNote&&!workflow)editor.append(node('p',templateNote,'autofill-template-note'));
   form=node('form',undefined,'autofill-form');form.noValidate=false;
   const fields=node('div',undefined,'autofill-fields');
+  const additionalLabels=[];
+  extraStudents=state.values.additional_student_3?2:state.values.additional_student_2?Math.max(extraStudents,1):extraStudents;
   const seenGroups=new Set();
   const displayKeys=workflow&&article.id==='company'?companyKeys(template.fields,state.values.application_status):template.fields;
   if(workflow&&article.id==='company'){
@@ -97,18 +126,28 @@ function createView(article){
    else if(meta.type==='textarea'){input=node('textarea');input.rows=3;input.maxLength=textLimit(key);label.classList.add('autofill-field-wide');}
    else{input=node('input');input.type=['date','month','email','tel','number','url'].includes(meta.type)?meta.type:'text';if(input.type!=='number')input.maxLength=textLimit(key);if(meta.type==='number'){input.min=String(meta.min??0);input.max=String(meta.max??10000);input.step=String(meta.step??1);}}
    input.name=key;input.id='autofill-'+article.id+'-'+key;input.required=meta.required!==false;if(workflow&&article.id==='company'&&state.values.application_status!=='Accepted')input.required=key==='company_name';input.value=state.values[key]||'';input.autocomplete='off';
-   if(meta.pattern)input.pattern=meta.pattern;if(meta.placeholder)input.placeholder=meta.placeholder;
-   input.addEventListener('input',()=>{state.values[key]=input.value;if(workflow&&article.id==='intent'&&['student_full_name','student_number'].includes(key))confirmations.company=false;changed();input.setCustomValidity('');invalidate();saveRemembered();updateStorageUi();setStatus('Draft updated. Review your details before downloading.');});
-   input.addEventListener('change',()=>{state.values[key]=input.value;if(workflow&&article.id==='intent'&&['student_full_name','student_number'].includes(key))confirmations.company=false;changed();input.setCustomValidity('');invalidate();saveRemembered();updateStorageUi();});
+   if(meta.pattern)input.pattern=meta.pattern;if(meta.placeholder)input.placeholder=meta.placeholder;else if(key==='event_title')input.placeholder='e.g. Supervised On-the-Job Training';
+   input.addEventListener('input',()=>{state.values[key]=input.value;changed(key);input.setCustomValidity('');invalidate();saveRemembered();updateStorageUi();setStatus('Draft updated. Review your details before downloading.');});
+   input.addEventListener('change',()=>{state.values[key]=input.value;changed(key);input.setCustomValidity('');invalidate();saveRemembered();updateStorageUi();});
    label.append(input);
    if(meta.help){const help=node('small',meta.help);help.id=input.id+'-help';input.setAttribute('aria-describedby',help.id);label.append(help);}
    controls.push([key,input]);fields.append(label);
+   if(['additional_student_2','additional_student_3'].includes(key)){const ordinal=key==='additional_student_2'?1:2;additionalLabels.push({ordinal,label,input,key});label.hidden=ordinal>extraStudents;}
   }
-  form.append(fields,node('p','* Required for this document. Details are reused in the other available forms.','autofill-required-note'));
+  if(template.id==='moa'&&additionalLabels.length){
+   const studentActions=node('div',undefined,'autofill-buttons autofill-field-wide');const add=node('button','Add another student','resource-action secondary'),remove=node('button','Remove last additional student','resource-action secondary');add.type=remove.type='button';
+   function syncStudents(){for(const item of additionalLabels)item.label.hidden=item.ordinal>extraStudents;add.disabled=extraStudents>=additionalLabels.length;remove.hidden=extraStudents===0;}
+   add.onclick=()=>{extraStudents=Math.min(additionalLabels.length,extraStudents+1);syncStudents();invalidate();additionalLabels.find(item=>item.ordinal===extraStudents)?.input.focus();};
+   remove.onclick=()=>{const item=additionalLabels.find(item=>item.ordinal===extraStudents);if(item){item.input.value='';delete state.values[item.key];}extraStudents=Math.max(0,extraStudents-1);syncStudents();changed(item?.key);invalidate();saveRemembered();updateStorageUi();};
+   studentActions.append(add,remove);fields.append(studentActions,node('small','One primary student plus up to two additional students. Add only students covered by this agreement.','autofill-field-wide'));syncStudents();
+  }
+  form.append(fields,node('p','* Required for this document. Saved details are shared across document forms; changes will be reused in later downloads.','autofill-required-note'));
+  if(template.id==='waiver'){const requiredLabel=node('label',undefined,'autofill-remember autofill-waiver-confirm');const requiredInput=node('input');requiredInput.type='checkbox';requiredInput.required=true;requiredLabel.append(requiredInput,node('span','The coordinator has confirmed that this liability waiver is required for my activity. It does not replace parent or guardian consent.'));form.append(requiredLabel);}
+
   const rememberLabel=node('label',undefined,'autofill-remember');rememberInput=node('input');rememberInput.type='checkbox';rememberInput.checked=state.remember;rememberLabel.append(rememberInput,node('span','Remember my details on this device'));
   storageNote=node('p','','autofill-storage-note');rememberInput.addEventListener('change',()=>{state.remember=rememberInput.checked;if(state.remember)saveRemembered();else{const removed=removeRemembered();state.storageMessage=removed?'Device saving is off. Your current draft remains in this tab.':'Device saving is off for this tab, but browser storage could not be cleared. Clear this site’s saved data in your browser settings.';}updateStorageUi();});
   const privacy=node('p','Document preparation happens in your browser. This form does not submit your information to the coordinator. Upload and submit the finished file separately using the submission instructions.','autofill-privacy');
-  const buttons=node('div',undefined,'autofill-buttons');const review=node('button','Review details','resource-action');review.type='submit';const clear=node('button','Clear all details','resource-action secondary');clear.type='button';clear.addEventListener('click',()=>{if(busy)return;if(!window.confirm('Clear the details entered in all document forms and remove this portal’s saved details from this browser? Downloaded files and Google Forms responses are not deleted.'))return;state.values={};for(const k of Object.keys(confirmations))delete confirmations[k];state.remember=false;window.dispatchEvent(new CustomEvent('sojt-workflow-reset'));const removed=removeRemembered();state.storageMessage=removed?'Document form details cleared from this tab and browser.':'Details cleared from this tab, but saved browser data could not be removed. Clear this site’s data in browser settings.';for(const view of views.values())view.sync();setStatus(state.storageMessage);});if(workflow){review.textContent='Confirm information';const draft=node('button','Save draft','resource-action secondary');draft.type='button';draft.onclick=()=>{changed();saveRemembered();updateStorageUi();setStatus(state.remember?'Draft saved on this browser.':'Draft kept in this tab. Enable device saving to keep it after closing.');};buttons.append(draft);}buttons.append(review,clear);
+  const buttons=node('div',undefined,'autofill-buttons');const review=node('button','Review details','resource-action');review.type='submit';const clear=node('button','Clear all details','resource-action secondary');clear.type='button';clear.addEventListener('click',()=>{if(busy)return;if(!window.confirm('Clear the details entered in all document forms and remove this portal’s saved details from this browser? Downloaded files and Google Forms responses are not deleted.'))return;state.values={};for(const k of Object.keys(confirmations))delete confirmations[k];state.remember=false;window.dispatchEvent(new CustomEvent('sojt-workflow-reset'));const removed=removeRemembered();state.storageMessage=removed?'Document form details cleared from this tab and browser.':'Details cleared from this tab, but saved browser data could not be removed. Clear this site’s data in browser settings.';extraStudents=0;for(const view of views.values())view.sync();if(template?.id==='moa')build();setStatus(state.storageMessage);});if(workflow){review.textContent='Confirm information';const draft=node('button','Save draft','resource-action secondary');draft.type='button';draft.onclick=()=>{changed();saveRemembered();updateStorageUi();setStatus(state.remember?'Draft saved on this browser.':'Draft kept in this tab. Enable device saving to keep it after closing.');};buttons.append(draft);}buttons.append(review,clear);
   form.append(rememberLabel,storageNote,privacy,buttons);editor.append(form);
   preview=node('section',undefined,'autofill-review');preview.hidden=true;preview.setAttribute('aria-label','Review document details');editor.append(preview);
   form.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;for(const [,input]of controls)input.setCustomValidity('');
@@ -140,7 +179,7 @@ function createView(article){
   finally{busy=false;section.removeAttribute('aria-busy');allButtons.forEach((e,i)=>e.disabled=disabledStates[i]);}
  }
  async function open(){
-  expanded=!expanded;prepare.setAttribute('aria-expanded',String(expanded));prepare.textContent=expanded?'Hide form':workflow?'Open information form':'Prefill my letter →';editor.hidden=!expanded;if(!expanded)return;
+  expanded=!expanded;prepare.setAttribute('aria-expanded',String(expanded));prepare.textContent=expanded?'Hide form':prepareLabel;editor.hidden=!expanded;if(!expanded)return;
   if(!state.manifest){setStatus('Loading document form…');try{await loadManifest();for(const view of views.values())view.sync();}catch(e){setStatus(e.message+' Close and reopen the form to retry. The blank Word template is also available below.');return;}}
   if(!built)build();else updateValues();setStatus(workflow?'Save a partial draft or confirm complete information.':'Fill in the details below, then review your document.');progress();
  }

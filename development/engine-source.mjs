@@ -1,3 +1,4 @@
+import {generateStructuredPdf} from './structured-pdf.mjs';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import {PDFDocument} from 'pdf-lib';
@@ -31,6 +32,11 @@ export function validateValues(templateId, values, manifest){
    if(rule.type==='url'){let u;try{u=new URL(v);}catch{throw Error('Enter a valid '+rule.label+'.');}if(u.protocol!=='https:'||u.username||u.password)throw Error('Use an HTTPS link for '+rule.label+'.');}
   }
   clean[key]=v;
+ }
+ if(templateId==='moa'){
+  if(clean.additional_student_3&&!clean.additional_student_2)throw Error('Add the second student before adding a third student.');
+  const names=[clean.student_full_name,clean.additional_student_2,clean.additional_student_3].filter(Boolean).map(n=>n.replace(/\s+/g,' ').toLocaleLowerCase());
+  if(new Set(names).size!==names.length)throw Error('Each student name must be different.');
  }
  if(clean.start_date&&clean.end_date&&clean.end_date<clean.start_date)throw Error('End date must be on or after the start date.');
  return clean;
@@ -110,6 +116,7 @@ export async function generateDocument({templateId,values,format,manifest,templa
  }
  if(!fontBytes)throw Error('The document font could not be loaded. Please retry.');
  const face=fontkit.create(fontBytes);for(const value of Object.values(data))for(const char of value){if(!/\s/.test(char)&&!face.hasGlyphForCodePoint(char.codePointAt(0)))throw Error('The PDF print font does not support a character in your details. Download Word to preserve it.');}
+ if(template.pdfMode==='structured')return generateStructuredPdf({template,data,templateBytes,fontBytes,boldFontBytes});
  if(template.pdfMode==='flow')return generateFlowPdf({template,data,templateBytes,fontBytes,boldFontBytes});
  const pdf=await PDFDocument.load(templateBytes);pdf.registerFontkit(fontkit);
  const font=await pdf.embedFont(fontBytes,{subset:true});const form=pdf.getForm();

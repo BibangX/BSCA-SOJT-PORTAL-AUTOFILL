@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "fields": {
     "student_full_name": {
       "label": "Full legal name",
@@ -177,6 +177,7 @@
         "Mr.",
         "Ms.",
         "Dr.",
+        "Atty.",
         "Instr.",
         "Asst. Prof.",
         "Assoc. Prof.",
@@ -202,6 +203,7 @@
         "Mr.",
         "Ms.",
         "Dr.",
+        "Atty.",
         "Instr.",
         "Asst. Prof.",
         "Assoc. Prof.",
@@ -217,6 +219,70 @@
       "required": true,
       "maxLength": 80,
       "group": "Institutional signatories"
+    },
+    "dean_title": {
+      "label": "Dean designation",
+      "type": "select",
+      "options": [
+        "Mr.",
+        "Ms.",
+        "Dr.",
+        "Atty.",
+        "Instr.",
+        "Asst. Prof.",
+        "Assoc. Prof.",
+        "Prof."
+      ],
+      "maxLength": 12,
+      "group": "Institutional signatories",
+      "required": true
+    },
+    "dean_name": {
+      "label": "College dean name",
+      "type": "text",
+      "maxLength": 80,
+      "group": "Institutional signatories",
+      "required": true,
+      "help": "Enter the name only; choose the designation separately. Reused in both documents."
+    },
+    "additional_student_2": {
+      "label": "Second student full name",
+      "type": "text",
+      "maxLength": 80,
+      "group": "Additional students",
+      "required": false
+    },
+    "additional_student_3": {
+      "label": "Third student full name",
+      "type": "text",
+      "maxLength": 80,
+      "group": "Additional students",
+      "required": false
+    },
+    "event_title": {
+      "label": "Event or activity title",
+      "type": "text",
+      "maxLength": 120,
+      "group": "Waiver details",
+      "required": true,
+      "placeholder": "Supervised On-the-Job Training",
+      "help": "Use the exact activity title confirmed by the coordinator."
+    },
+    "waiver_duration": {
+      "label": "Activity duration",
+      "type": "text",
+      "maxLength": 120,
+      "group": "Waiver details",
+      "required": true,
+      "help": "Uses your saved training dates when available. Check the dates apply to this activity."
+    },
+    "guardian_name": {
+      "label": "Parent or guardian full name",
+      "type": "text",
+      "maxLength": 80,
+      "group": "Waiver details",
+      "required": true,
+      "help": "Typed name only. The parent or guardian must sign separately."
     }
   },
   "templates": [
@@ -816,6 +882,1276 @@
       },
       "font": "./vendor/LiberationSans-Regular.ttf",
       "boldFont": "./vendor/LiberationSans-Bold.ttf"
+    },
+    {
+      "id": "moa",
+      "step": "moa",
+      "label": "On-the-Job Training Agreement",
+      "version": "1.0.0",
+      "status": "provided",
+      "fields": [
+        "student_full_name",
+        "company_name",
+        "company_address",
+        "recipient_name",
+        "recipient_title",
+        "dean_title",
+        "dean_name",
+        "chairperson_title",
+        "chairperson_name",
+        "coordinator_title",
+        "coordinator_name",
+        "additional_student_2",
+        "additional_student_3"
+      ],
+      "note": "Uses your supplied MOA. Program hours and the Special Order reference are retained. Confirm these with the coordinator; signatures, execution dates and notarial details remain for authorized completion.",
+      "formats": [
+        "docx",
+        "pdf"
+      ],
+      "docx": "./templates/autofill/moa.docx",
+      "pdf": "./templates/autofill/moa.pdf",
+      "pdfMode": "structured",
+      "font": "./vendor/LiberationSerif-Regular.ttf",
+      "boldFont": "./vendor/LiberationSerif-Bold.ttf",
+      "pdfLayout": {
+        "width": 595.3,
+        "height": 841.9,
+        "left": 72,
+        "right": 72,
+        "top": 72,
+        "bottom": 65,
+        "size": 12,
+        "leading": 20.7,
+        "blocks": [
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "ON-THE-JOB TRAINING AGREEMENT",
+                "bold": true
+              }
+            ],
+            "size": 16.0,
+            "align": "center",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 10
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "KNOW ALL MEN BY THESE PRESENTS:",
+                "bold": true
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 20.7,
+            "after": 12
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "MINDANAO STATE UNIVERSITY - ILIGAN INSTITUTE OF TECHNOLOGY (hereinafter called MSU-IIT)",
+                "bold": true
+              },
+              {
+                "text": ", an educational institution created under ",
+                "bold": false
+              },
+              {
+                "text": "R.A No. 5363",
+                "bold": true
+              },
+              {
+                "text": " as an autonomous external unit of the Mindanao State University, with its principal office at Andres Bonifacio Avenue, Tibanga, Iligan City, Philippines represented by its College Dean ",
+                "bold": false
+              },
+              {
+                "text": "{dean_title} {dean_name}",
+                "bold": true
+              },
+              {
+                "text": ", duly authorized under SPECIAL ORDER No. 00959-IIT Series of 2025, hereinafter referred to as the FIRST PARTY; and",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "{company_name}",
+                "bold": true
+              },
+              {
+                "text": ", at {company_address}",
+                "bold": false
+              },
+              {
+                "text": ", herein represented by ",
+                "bold": false
+              },
+              {
+                "text": "{recipient_name}",
+                "bold": true
+              },
+              {
+                "text": ", ",
+                "bold": false
+              },
+              {
+                "text": "{recipient_title}",
+                "bold": true
+              },
+              {
+                "text": ", hereinafter referred to as the SECOND PARTY;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "space",
+            "height": 20
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "WITNESSETH",
+                "bold": true
+              }
+            ],
+            "size": 12.0,
+            "align": "center",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "WHEREAS, the FIRST PARTY has established a professional program for its students which was duly approved by the Commission on Higher Education (\"CHED\");",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "WHEREAS, one of the objectives of the program is to train students to become competitive, innovative, technical, and world-class",
+                "bold": false
+              },
+              {
+                "text": " Bachelor of Science in Computer Applications (BSCA)",
+                "bold": true
+              },
+              {
+                "text": " professionals through actual exposure to an Embedded / IoT or related workplace environment;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "WHEREAS, the FIRST PARTY has chosen the SECOND PARTY as one of the former venues for practicum purposes given the latter's extensive resources and its proximity;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "WHEREAS, the SECOND PARTY has agreed to cooperate with the FIRST PARTY in the utilization of the former's premises and facilities as an extension for educational training;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "NOW THEREFORE, for and in consideration of the foregoing premises, the parties bind themselves to the following terms and conditions:",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "OBLIGATIONS OF THE FIRST PARTY",
+                "bold": true
+              }
+            ],
+            "size": 13.0,
+            "align": "left",
+            "leading": 20.7,
+            "after": 12,
+            "keepWithNext": true,
+            "pageBreak": true
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "1. ",
+                "bold": false
+              },
+              {
+                "text": "The FIRST PARTY will provide the SECOND PARTY with a list of names of participating students, the nature of each student’s educational assignments, the dates for reporting to their assigned tasks, and the total number of required training hours, which is 700 hours under the program.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "2. ",
+                "bold": false
+              },
+              {
+                "text": "The FIRST PARTY will designate a Supervised On-the-Job Coordinator (hereinafter referred to as Coordinator) who will coordinate with the SECOND PARTY regarding student assignments and training activities, assist in student evaluation, and resolve any disputes that may arise during training hours.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "3. ",
+                "bold": false
+              },
+              {
+                "text": "The FIRST PARTY, through the Coordinator, shall monitor the performance and professional demeanor of each student.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "4. ",
+                "bold": false
+              },
+              {
+                "text": "The FIRST PARTY undertakes to withdraw its endorsement for any student who, after due investigation into disciplinary infractions, proves to be unfit to continue practicum training. This action is taken to prevent personal harm or injury to fellow student-trainees, anyone employed with the SECOND PARTY, and/or potential property damage.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "5. ",
+                "bold": false
+              },
+              {
+                "text": "The FIRST PARTY agrees not to use the company name of the SECOND PARTY in any publication or advertising, except in school catalogs, bulletins, and student recruitment materials.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "OBLIGATIONS OF THE SECOND PARTY",
+                "bold": true
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 12,
+            "keepWithNext": true
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "a. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY agrees to train the following BSCA students:",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "1. ",
+                "bold": false
+              },
+              {
+                "text": "{student_full_name}{#additional_student_2}, {additional_student_2}{/additional_student_2}{#additional_student_3}, {additional_student_3}{/additional_student_3}",
+                "bold": true
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0,
+            "indent": 54
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "b. ",
+                "bold": false
+              },
+              {
+                "text": "Before the actual commencement of the practical training, the SECOND PARTY shall conduct an orientation lecture to apprise the participating students of the house rules and working regulations of the SECOND PARTY.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "c. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY agrees to conduct the training on-site, allowing them to learn and gain practical experience throughout the entire duration",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "d. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY shall designate one or more members of its staff with appropriate qualifications to instruct and supervise the students during training hours, communicate with the Coordinator regarding the status of the training, and make said staff members available for academic consultation with the students.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "e. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY is primarily responsible for the actual supervision and control of practicum training and student activities while the OJT is still ongoing.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "f. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY may provide students with nominal financial or material consideration in the form of transportation and/or meal allowance.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "g. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY shall coordinate with the Coordinator regarding any concerns involving any of the students, particularly in matters of obedience to house rules and working regulations, and their educational process during training.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "h. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY agrees to schedule the dates of the practicum training to avoid conflicts with class schedules, if any, as provided by the FIRST PARTY.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "i. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY may absorb students after graduation if there are openings and if the students demonstrate the work qualities that the SECOND PARTY is looking for.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "j. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY agrees to provide each student in the Company with all company policies, rules, and regulations pertinent to the student's role in the practicum.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "k. ",
+                "bold": false
+              },
+              {
+                "text": "The SECOND PARTY shall issue to each student-trainee who satisfactorily completes the practicum training a Certificate of Completion.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 8,
+            "indent": 18
+          },
+          {
+            "type": "space",
+            "height": 10
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "IN WITNESS HEREOF, the parties hereunto affixed their signature this ___ day of ___________ Iligan City, Philippines.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36,
+            "pageBreak": true
+          },
+          {
+            "type": "space",
+            "height": 20
+          },
+          {
+            "type": "columns",
+            "cells": [
+              [
+                {
+                  "text": "MSU-ILIGAN INSTITUTE OF TECHNOLOGY",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "First Party",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ],
+              [
+                {
+                  "text": "{company_name}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "Second Party",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ]
+            ],
+            "gap": 30,
+            "signatureSpace": 0,
+            "after": 5
+          },
+          {
+            "type": "columns",
+            "cells": [
+              [
+                {
+                  "text": "{dean_title} {dean_name}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "College Dean, CCS",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ],
+              [
+                {
+                  "text": "{recipient_name}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "{recipient_title}",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ]
+            ],
+            "gap": 30,
+            "signatureSpace": 38,
+            "after": 9
+          },
+          {
+            "type": "columns",
+            "cells": [
+              [
+                {
+                  "text": "{chairperson_title} {chairperson_name}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "Chairperson, Computer Applications",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "Department",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ],
+              [
+                {
+                  "text": "{student_full_name}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "Student Trainee",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ]
+            ],
+            "gap": 30,
+            "signatureSpace": 38,
+            "after": 9
+          },
+          {
+            "type": "columns",
+            "cells": [
+              [
+                {
+                  "text": "{coordinator_title} {coordinator_name}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                },
+                {
+                  "text": "SOJT Coordinator",
+                  "bold": false,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ],
+              [
+                {
+                  "text": "{#additional_student_2}{additional_student_2}\nStudent Trainee{/additional_student_2}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ]
+            ],
+            "gap": 30,
+            "signatureSpace": 38,
+            "after": 9
+          },
+          {
+            "type": "columns",
+            "cells": [
+              [],
+              [
+                {
+                  "text": "{#additional_student_3}{additional_student_3}\nStudent Trainee{/additional_student_3}",
+                  "bold": true,
+                  "size": 12,
+                  "leading": 20.7
+                }
+              ]
+            ],
+            "gap": 30,
+            "signatureSpace": 38,
+            "after": 9
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "ACKNOWLEDGMENT",
+                "bold": true
+              }
+            ],
+            "size": 12.0,
+            "align": "center",
+            "leading": 20.7,
+            "after": 10,
+            "pageBreak": true,
+            "keepWithNext": true
+          },
+          {
+            "type": "space",
+            "height": 10
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Republic of the Philippines)",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "City of _________________ ) S.S",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 10
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "BEFORE ME, this_____day of _______ ______, in the City of Iligan, Philippines personally appeared. {dean_name}",
+                "bold": false
+              },
+              {
+                "text": " with ID  No. ___________________ issued at _________________, in his capacity as College Dean of CCS  and ",
+                "bold": false
+              },
+              {
+                "text": "{recipient_name}",
+                "bold": true
+              },
+              {
+                "text": "  with ",
+                "bold": false
+              },
+              {
+                "text": "ID No. _________",
+                "bold": false
+              },
+              {
+                "text": " issued at ____________, in her capacity as the ",
+                "bold": false
+              },
+              {
+                "text": "{recipient_title}, {company_name}, {company_address}",
+                "bold": true
+              },
+              {
+                "text": " Known to me to be the same persons who executed the foregoing instruments and they acknowledged to me that the same is his own free and voluntary act of the Institute he represent.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 10,
+            "firstIndent": 36
+          },
+          {
+            "type": "space",
+            "height": 20
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "                  IN WITNESS WHEREOF, I have hereunto affixed my signature on the date and place first above written.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 10
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Doc. No. ___________;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Page No. ___________;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Book No.___________;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Series of      ______ ;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 20.7,
+            "after": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "waiver",
+      "step": "preparation",
+      "label": "Liability waiver",
+      "version": "1.0.0",
+      "status": "provided",
+      "fields": [
+        "student_full_name",
+        "dean_title",
+        "dean_name",
+        "event_title",
+        "waiver_duration",
+        "guardian_name"
+      ],
+      "note": "Optional: use only when the coordinator confirms this waiver is required. This is not parental consent. The parent or guardian must review and sign; notarial details remain blank.",
+      "formats": [
+        "docx",
+        "pdf"
+      ],
+      "docx": "./templates/autofill/waiver.docx",
+      "pdf": "./templates/autofill/waiver.pdf",
+      "pdfMode": "structured",
+      "font": "./vendor/LiberationSerif-Regular.ttf",
+      "boldFont": "./vendor/LiberationSerif-Bold.ttf",
+      "pdfLayout": {
+        "width": 595.3,
+        "height": 841.9,
+        "left": 40.5,
+        "right": 40.5,
+        "top": 98,
+        "bottom": 65,
+        "size": 12,
+        "leading": 14,
+        "blocks": [
+          {
+            "type": "space",
+            "height": 14
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "LIABILITY WAIVER",
+                "bold": true
+              }
+            ],
+            "size": 14.0,
+            "align": "center",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "To: ",
+                "bold": false
+              },
+              {
+                "text": "{dean_title} {dean_name}",
+                "bold": true
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "    \t  ",
+                "bold": false
+              },
+              {
+                "text": "Dean",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "\t",
+                "bold": false
+              },
+              {
+                "text": "  College of Computer Studies",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Event/Activity\t: {event_title}",
+                "bold": false
+              },
+              {
+                "text": " ",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 6
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Duration\t\t: ",
+                "bold": false
+              },
+              {
+                "text": "{waiver_duration} ",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 6
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Student-Trainee\t:",
+                "bold": false
+              },
+              {
+                "text": " ",
+                "bold": false
+              },
+              {
+                "text": "{student_full_name} ",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 6
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "I understand that participation in the above event or activity could include actions or tasks which might be hazardous to the participant named above. ",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 6,
+            "firstIndent": 30
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "By signing below, I assume any risk of harm or injury which might occur to the student-trainee due to his/her participation in the event or activity. I release the organization or business named above from all liability, costs and damages which might arise from participation in the above-named event or activity",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 6,
+            "firstIndent": 30
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Name of Parent or Guardian:  _",
+                "bold": false
+              },
+              {
+                "text": "{guardian_name}",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Signature of Parent or Guardian: _____________________\t\t\tDate: __________",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "left",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 7
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "SUBSCRIBED AND SWORN to before me this __ day of ___________ in the City of Iligan, Philippines affiant having exhibited to me his ____ ID with no. ___ issued on ______ at _______. ",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 6,
+            "firstIndent": 30
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "____________________",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "right",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Notary Public",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "right",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "space",
+            "height": 22
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Doc. No.____;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Page No.____;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Book No.____;",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 0
+          },
+          {
+            "type": "paragraph",
+            "runs": [
+              {
+                "text": "Series of   ______.",
+                "bold": false
+              }
+            ],
+            "size": 12.0,
+            "align": "justify",
+            "leading": 14,
+            "after": 0
+          }
+        ]
+      }
     }
   ]
 }

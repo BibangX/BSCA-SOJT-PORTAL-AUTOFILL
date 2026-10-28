@@ -12,11 +12,11 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const manifest=JSON.parse(await readFile(path.join(root,'templates/autofill/manifest.json'),'utf8'));
 const fixture={student_full_name:"María-José Dela Peña O'Connor",student_number:'2026-00123',school_email:'student@g.msuiit.edu.ph',year_level:'4th year',semester:'1st semester',academic_year:'2026-2027',start_date:'2026-11-01',end_date:'2027-02-28',remaining_units:'0',adviser_name:'Ana María Santos',program_of_study_note:'BS Computer Applications',company_name:'A & B Systems',company_address:'123 Example Street, Barangay Poblacion, Iligan City, Lanao del Norte 9200, Philippines',recipient_name:'Ms. Elena Cruz',recipient_title:'Human Resources Manager',company_email:'hr@example.com',company_phone:'+63 917 123 4567',acceptance_link:'https://drive.google.com/file/d/example/view',letter_date:'2026-10-22',required_hours:'486'};
 const templates=manifest.templates;
-function valuesFor(t){const values={...fixture};for(const key of t.fields){if(values[key]!==undefined)continue;const f=manifest.fields[key];values[key]=f.default??(f.options?.[0]?.value??f.options?.[0])??(f.type==='date'?'2026-11-01':f.type==='email'?'test@example.com':f.type==='number'?'1':'Sample value');}return values;}
+function valuesFor(t){const values={...fixture};for(const key of t.fields){if(key.startsWith('additional_student_')){values[key]='';continue;}if(values[key]!==undefined)continue;const f=manifest.fields[key];values[key]=f.default??(f.options?.[0]?.value??f.options?.[0])??(f.type==='date'?'2026-11-01':f.type==='email'?'test@example.com':f.type==='number'?'1':'Sample value');}return values;}
 function templateWith(key){return templates.find(t=>t.fields.includes(key));}
 
-test('all three masters have field definitions and unique stable IDs',()=>{
- assert.equal(templates.length,3);assert.equal(new Set(templates.map(t=>t.id)).size,3);
+test('all five masters have field definitions and unique stable IDs',()=>{
+ assert.equal(templates.length,5);assert.equal(new Set(templates.map(t=>t.id)).size,5);
  for(const t of templates){assert.ok(t.fields.length);assert.equal(new Set(t.fields).size,t.fields.length);for(const k of t.fields)assert.ok(manifest.fields[k],`${t.id}: unknown field ${k}`);}
 });
 test('valid Unicode names, apostrophes and zero remaining units are accepted',()=>{

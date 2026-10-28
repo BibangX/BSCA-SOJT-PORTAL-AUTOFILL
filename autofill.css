@@ -12,3 +12,7 @@
 .autofill-manual .resource-action{font-size:12px;max-width:100%;white-space:normal}
 .autofill-submit{padding:18px 20px;background:#faf0db;border:1px solid #dfcc9d;border-radius:12px}
 @media(max-width:760px){.autofill-panel>.resource-action{width:100%;text-align:center}.autofill-submit{padding:16px}}
+.autofill-other-materials{grid-column:1/-1;min-width:0}
+.autofill-panel .autofill-waiver-confirm{padding:12px;border:1px solid #b99b63;border-radius:8px;background:#faf0d8;color:#654a27}
+.autofill-panel .autofill-field[hidden]{display:none!important}
+.autofill-other-materials .resource-action{margin-bottom:6px}
