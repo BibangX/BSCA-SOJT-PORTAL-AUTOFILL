@@ -42,17 +42,28 @@ function mount(){
  view.sync();
 }
 function createView(article){
- if(article.id==='endorsement'){const note=article.querySelector('.resource-step-actions .template-note');if(note)note.textContent='Updated endorsement letter. Choose Prepare document to fill the placeholders and download Word or PDF.';}
  const workflow=['intent','company'].includes(article.id);
  const section=node('section',undefined,'autofill-panel');section.setAttribute('aria-labelledby','autofill-heading-'+article.id);
- const heading=node('h4',workflow?(article.id==='intent'?'Your information and intent':'Your company application'):'Prepare a filled document');heading.id='autofill-heading-'+article.id;
- const intro=node('p','Enter your details once, review them, then download a filled Word or PDF document. Signatures and official approval sections stay blank.','autofill-intro');
+ const heading=node('h4',workflow?(article.id==='intent'?'Your information and intent':'Your company application'):'Create your endorsement letter');heading.id='autofill-heading-'+article.id;
+ const intro=node('p','Recommended: use your saved Level 1 and 2 details, complete the remaining fields, then review and download your filled Word or PDF. Signatures and official approval sections stay blank.','autofill-intro');
  if(workflow){intro.textContent='Save a draft anytime, then confirm complete information. Details are reused in later documents. This public portal saves only in this tab unless you enable device saving.';article.querySelector('.resource-submit')?.remove();article.querySelector('.resource-step-actions')?.remove();}
- const prepare=node('button',workflow?'Open information form':'Prepare document','resource-action');prepare.type='button';prepare.setAttribute('aria-expanded','false');prepare.setAttribute('aria-controls','autofill-editor-'+article.id);
+ const prepare=node('button',workflow?'Open information form':'Prefill my letter →','resource-action');prepare.type='button';prepare.setAttribute('aria-expanded','false');prepare.setAttribute('aria-controls','autofill-editor-'+article.id);
  const editor=node('div',undefined,'autofill-editor');editor.id='autofill-editor-'+article.id;editor.hidden=true;
  const status=node('p','','autofill-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  section.append(heading,intro,prepare,editor,status);
- const body=article.querySelector('.resource-step-body'),submit=article.querySelector('.resource-submit');(body||article).append(section);if(submit){submit.classList.add('autofill-submit');(body||article).append(submit);}
+ const body=article.querySelector('.resource-step-body'),submit=article.querySelector('.resource-submit');
+ if(!workflow){
+  body?.classList.add('autofill-guided-layout');
+  section.prepend(node('p','1 · FILL DETAILS   →   2 · REVIEW   →   3 · DOWNLOAD','autofill-route'));
+  const materials=article.querySelector('.resource-step-actions');
+  const alternative=node('details',undefined,'autofill-manual');
+  alternative.append(node('summary','Prefer to fill it manually? Download the blank template'));
+  alternative.append(node('p','Optional alternative: this Word template has empty placeholders. Fill every required detail yourself before printing and signing.','template-note'));
+  if(materials){for(const link of [...materials.querySelectorAll('a[download]')]){link.textContent='Download blank Word template';alternative.append(link);}materials.remove();}
+  section.append(alternative);
+ }
+ (body||article).append(section);
+ if(submit){submit.classList.add('autofill-submit');if(!workflow){submit.prepend(node('h4','After downloading: sign and submit'));submit.prepend(node('p','Finish your document','autofill-route'));} (body||article).append(submit);}
  let built=false, expanded=false, busy=false, template, form, preview, controls=[],rememberInput, storageNote;
  function setStatus(message){status.textContent=message;}
  function invalidate(){if(preview)preview.hidden=true;}
@@ -129,8 +140,8 @@ function createView(article){
   finally{busy=false;section.removeAttribute('aria-busy');allButtons.forEach((e,i)=>e.disabled=disabledStates[i]);}
  }
  async function open(){
-  expanded=!expanded;prepare.setAttribute('aria-expanded',String(expanded));prepare.textContent=expanded?'Hide form':workflow?'Open information form':'Prepare document';editor.hidden=!expanded;if(!expanded)return;
-  if(!state.manifest){setStatus('Loading document form…');try{await loadManifest();for(const view of views.values())view.sync();}catch(e){setStatus(e.message+' Select Hide document form, then Prepare document to retry.');return;}}
+  expanded=!expanded;prepare.setAttribute('aria-expanded',String(expanded));prepare.textContent=expanded?'Hide form':workflow?'Open information form':'Prefill my letter →';editor.hidden=!expanded;if(!expanded)return;
+  if(!state.manifest){setStatus('Loading document form…');try{await loadManifest();for(const view of views.values())view.sync();}catch(e){setStatus(e.message+' Close and reopen the form to retry. The blank Word template is also available below.');return;}}
   if(!built)build();else updateValues();setStatus(workflow?'Save a partial draft or confirm complete information.':'Fill in the details below, then review your document.');progress();
  }
  prepare.addEventListener('click',open);

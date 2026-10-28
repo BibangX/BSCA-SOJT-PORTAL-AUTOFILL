@@ -3,3 +3,12 @@
 @media(max-width:760px){.autofill-fields{grid-template-columns:1fr}.autofill-review-list{grid-template-columns:1fr;gap:3px}.autofill-review-list dd{margin-bottom:9px}.autofill-review{padding:13px}.autofill-buttons>.resource-action{flex:1 1 140px;text-align:center}.autofill-panel .resource-action{white-space:normal;max-width:100%}}
 
 .autofill-panel,.autofill-submit{grid-column:1/-1;min-width:0}.autofill-panel{padding:20px;background:#fff9ec;border:1px solid #dfcc9d;border-radius:12px;margin-top:0}.autofill-submit{margin-top:0}.autofill-form{max-width:none}.autofill-review-list{grid-template-columns:minmax(160px,.65fr) minmax(0,1.35fr)}@media(max-width:760px){.autofill-panel{padding:16px}.autofill-review-list{grid-template-columns:1fr}}
+/* One guided document route: instructions, prefill, then submission. */
+.level-dialog .resource-step-body.autofill-guided-layout{grid-template-columns:minmax(0,1fr)}
+.autofill-panel .autofill-route,.autofill-submit .autofill-route{font-size:11px;font-weight:700;letter-spacing:.07em;color:#866431;margin:0 0 12px;line-height:1.7}
+.autofill-manual{margin-top:22px;padding-top:16px;border-top:1px solid #dfcc9d}
+.autofill-manual summary{cursor:pointer;color:#705d40;font:600 13px/1.6 Arial,sans-serif;padding:8px 0;min-height:44px}
+.autofill-manual summary:focus-visible{outline:3px solid #b98b34;outline-offset:3px}
+.autofill-manual .resource-action{font-size:12px;max-width:100%;white-space:normal}
+.autofill-submit{padding:18px 20px;background:#faf0db;border:1px solid #dfcc9d;border-radius:12px}
+@media(max-width:760px){.autofill-panel>.resource-action{width:100%;text-align:center}.autofill-submit{padding:16px}}
