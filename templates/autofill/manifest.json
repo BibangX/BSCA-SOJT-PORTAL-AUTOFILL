@@ -309,6 +309,97 @@
       "required": true,
       "group": "Company details",
       "help": "Choose the person’s pronouns. The agreement uses his, her or their as appropriate; never inferred from a name or title."
+    },
+    "student_pronouns": {
+      "label": "Student pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Student details",
+      "help": "Optional. If left blank, this document uses neutral they/them wording (their)."
+    },
+    "chairperson_pronouns": {
+      "label": "Chairperson pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Institutional signatories",
+      "help": "Optional saved choice. Used only when a document refers to this person with a pronoun."
+    },
+    "coordinator_pronouns": {
+      "label": "Coordinator pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Institutional signatories",
+      "help": "Optional saved choice. Used only when a document refers to this person with a pronoun."
+    },
+    "guardian_pronouns": {
+      "label": "Parent or guardian pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Waiver details",
+      "help": "Optional. If left blank, this document uses neutral they/them wording (their)."
+    },
+    "additional_student_2_pronouns": {
+      "label": "Second student pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Additional students",
+      "help": "Optional saved choice. Used only when a document refers to this person with a pronoun."
+    },
+    "additional_student_3_pronouns": {
+      "label": "Third student pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Additional students",
+      "help": "Optional saved choice. Used only when a document refers to this person with a pronoun."
+    },
+    "adviser_pronouns": {
+      "label": "Adviser pronouns",
+      "type": "select",
+      "options": [
+        "he/him",
+        "she/her",
+        "they/them"
+      ],
+      "maxLength": 9,
+      "required": false,
+      "group": "Academic details",
+      "help": "Optional. If left blank, this document uses neutral they/them wording (their)."
     }
   },
   "templates": [
@@ -1864,7 +1955,9 @@
         "dean_name",
         "event_title",
         "waiver_duration",
-        "guardian_name"
+        "guardian_name",
+        "student_pronouns",
+        "guardian_pronouns"
       ],
       "note": "Optional: use only when the coordinator confirms this waiver is required. This is not parental consent. The parent or guardian must review and sign; notarial details remain blank.",
       "formats": [
@@ -2047,7 +2140,7 @@
             "type": "paragraph",
             "runs": [
               {
-                "text": "By signing below, I assume any risk of harm or injury which might occur to the student-trainee due to his/her participation in the event or activity. I release the organization or business named above from all liability, costs and damages which might arise from participation in the above-named event or activity",
+                "text": "By signing below, I assume any risk of harm or injury which might occur to the student-trainee due to {student_pronouns} participation in the event or activity. I release the organization or business named above from all liability, costs and damages which might arise from participation in the above-named event or activity",
                 "bold": false
               }
             ],
@@ -2103,7 +2196,7 @@
             "type": "paragraph",
             "runs": [
               {
-                "text": "SUBSCRIBED AND SWORN to before me this __ day of ___________ in the City of Iligan, Philippines affiant having exhibited to me his ____ ID with no. ___ issued on ______ at _______. ",
+                "text": "SUBSCRIBED AND SWORN to before me this __ day of ___________ in the City of Iligan, Philippines affiant having exhibited to me {guardian_pronouns} ____ ID with no. ___ issued on ______ at _______. ",
                 "bold": false
               }
             ],

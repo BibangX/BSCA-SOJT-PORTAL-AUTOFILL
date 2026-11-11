@@ -1,3 +1,4 @@
+import {expandPronouns} from '../pronoun-values.js';
 import {generateStructuredPdf} from './structured-pdf.mjs';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
@@ -46,9 +47,7 @@ export function downloadFilename(templateId,values,format){
  const safe=v=>String(v||'').normalize('NFC').replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g,'_').replace(/\s+/g,'_').replace(/^\.+|\.+$/g,'').slice(0,70);
  return [safe(values.student_number)||'Student',safe(values.student_full_name)||'Document',safe(templateId)||'Template'].join('_')+'.'+format;
 }
-function displayValues(clean,manifest){
- return Object.fromEntries(Object.entries(clean).map(([key,v])=>[key,['dean_pronouns','recipient_pronouns'].includes(key)?({'he/him':'his','she/her':'her','they/them':'their'}[v]||v):manifest.fields[key].type==='date'&&v?new Intl.DateTimeFormat('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}).format(new Date(v+'T00:00:00Z')):v]));
-}
+function displayValues(clean,manifest){return expandPronouns(clean,manifest);}
 function wrapLines(text,font,size,width){
  const lines=[];for(const paragraph of text.split('\n')){let line='';for(const word of paragraph.split(/\s+/)){if(font.widthOfTextAtSize(word,size)>width)return Infinity;const next=line?line+' '+word:word;if(font.widthOfTextAtSize(next,size)>width){lines.push(line);line=word;}else line=next;}lines.push(line);}return lines.length;
 }
@@ -110,7 +109,7 @@ export async function generateDocument({templateId,values,format,manifest,templa
   const doc=new Docxtemplater(zip,{paragraphLoop:true,linebreaks:true,nullGetter:()=>{throw Error('A document field is missing.');}});
   const expected=new Set(template.fields);
   // Masters are trusted, versioned assets; user values are rendered as escaped text.
-  for(const key of Object.keys(data))if(!expected.has(key))throw Error('Unexpected document field.');
+  for(const key of Object.keys(data))if(!expected.has(key)&&!expected.has(key.replace(/_(subject|object|possessive|possessive_pronoun|reflexive)$/,'')))throw Error('Unexpected document field.');
   doc.render(data);
   return doc.getZip().generate({type:'uint8array',compression:'DEFLATE'});
  }

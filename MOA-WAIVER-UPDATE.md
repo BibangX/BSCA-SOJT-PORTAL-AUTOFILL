@@ -1,16 +1,26 @@
-# MOA and waiver prefill update
+# Public portal form and template update
 
-Apply this patch to the public GitHub Pages portal after the Level 1-2 workflow update. Extract and upload all contents at the repository root, preserving folders, replacing matching files; commit changes. No installation or build is required for deployment. Do not apply to the protected Netlify/Supabase project.
+Upload every file in this ZIP to the matching location in your existing public GitHub Pages repository. Start at the folder containing index.html. Preserve the templates, vendor, and development folders. This is an update, not a standalone website. It requires the public Level 1–2 workflow edition and must not replace the protected Netlify edition.
 
-Level 4: Prefill my MOA, review, then download Word or PDF. Student/company details and institutional signatories share the same saved fields as other documents. The agreement supports one primary and up to two additional students, with matching conditional signature spaces. Duplicate names are rejected. Internship plan stays a separate blank template until an updated master is supplied.
+New required files: person-fields.js, form-state.js, pronoun-values.js. Upload these together with autofill.js, autofill.css, autofill-engine.js and the included templates. Then refresh the deployed page (Ctrl+Shift+R).
 
-Level 5: optional liability waiver prefill, review, Word/PDF. Only use when the coordinator confirms it is required. The student and dean are reused. Duration starts from saved training dates when available, but students must check or correct it. Guardian and exact activity details are entered once for this document. Consent and medical requirements remain separate; this waiver does not replace either.
+## Student experience
 
-Designation dropdowns include Atty. Names are entered without repeating titles. Signatures, execution dates, official IDs and notarial entries remain blank. The MOA's substantive wording, 700 hours and Special Order reference remain as provided; only stale notarial years and author instructions were removed. The waiver letterhead is corrected to Department of Computer Applications in both Word and PDF downloads.
+1. Enter student information in Level 1 and company information in Level 2.
+2. Choose optional pronouns once for each person, including the adviser. MOA requires dean and representative pronouns because its acknowledgment uses them.
+3. Open the document level, fill remaining details, review, and download Word or PDF.
+4. Complete signatures, upload to Google Drive, then submit the direct file link through the existing Google Form.
 
-Browser-only saving is unchanged. Downloading is not submitting or approval. Upload signed completed files to Drive and submit the direct file link as instructed. This patch does not alter Google Forms or their document-type choices; the coordinator must confirm the forms provide the appropriate choice for a waiver if it is required.
+Changing a person's name clears that person's previous pronouns. Blank optional choices use neutral wording. Automatically filled waiver durations follow training date changes. Custom durations remain intact and request review when dates change. The Use my training dates button restores automatic dates.
 
-QA: 30 automated checks passed; Word/PDF generation and normal/long fixture layouts inspected. MOA five pages and waiver one page for tested realistic inputs; longer entries can change pagination. Browser review/download routes and shared values checked. Physical mobile testing not performed.
+Manual endorsement, MOA, and waiver downloads now have blank spaces rather than code placeholders. Autofill masters remain separate. The waiver remains optional and does not replace parent/guardian consent or medical clearance.
 
-## MOA centering and pronouns correction
-Both party/signature columns are centered within their existing widths in Word and PDF. Required Dean pronouns and Company representative pronouns dropdowns offer he/him, she/her and they/them. Each choice generates his, her or their in the acknowledgment. Nothing is inferred from names or titles. The joint reference uses plural their/they. Saved information from older versions loads normally; choose the two new values before generating a new MOA. Already downloaded files do not change automatically.
+Saved details remain browser-local and optional. Downloading or confirming information does not submit a document or grant coordinator approval. Existing map artwork, Google Form URLs, company references and progress rules are unchanged by this patch.
+
+## QA
+
+40 automated checks passed, including actual Word/PDF generation, centered MOA columns, pronoun forms, validation, optional students, shared-field resets, and automatic/custom durations. All seven rendered pages of the three manual templates inspected. Desktop browser checks verified shared values, name/pronoun reset, date refresh across levels, aligned rows and add/remove behavior. Physical phone/tablet testing remains unverified.
+
+## Development
+
+The development files are optional for GitHub Pages serving. To run tests, enter development, run npm ci, then npm test. Run npm run build after changing engine-source.mjs or pronoun-values.js. New templates can use person_pronouns_subject, person_pronouns_object, person_pronouns_possessive, person_pronouns_possessive_pronoun and person_pronouns_reflexive; retain the person's base pronoun key in template.fields. Existing *_pronouns placeholders continue to mean his/her/their.

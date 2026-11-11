@@ -16,3 +16,12 @@
 .autofill-panel .autofill-waiver-confirm{padding:12px;border:1px solid #b99b63;border-radius:8px;background:#faf0d8;color:#654a27}
 .autofill-panel .autofill-field[hidden]{display:none!important}
 .autofill-other-materials .resource-action{margin-bottom:6px}
+.autofill-person-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,2fr) minmax(125px,1fr);gap:12px;border:0;border-top:1px solid #dfcc9d;margin:4px 0 0;padding:12px 0 0;min-width:0}
+.autofill-person-row.has-designation{grid-template-columns:minmax(140px,1fr) minmax(0,2fr) minmax(125px,1fr)}
+.autofill-person-row legend{font:700 13px/1.5 Arial,sans-serif;color:#782133;padding:0 8px 0 0}
+.autofill-person-row .autofill-field{grid-column:auto}
+@media(max-width:760px){.autofill-person-row,.autofill-person-row.has-designation{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:761px){.autofill-person-row .autofill-field>span:first-child{min-height:36px;display:flex;align-items:flex-end}}
+
+.autofill-person-row[hidden]{display:none!important}
+.autofill-duration-note{grid-column:1/-1}

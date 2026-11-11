@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createRequire} from 'node:module';
@@ -132,7 +132,8 @@ test('endorsement optional department reuses company name and long values produc
  const {writeFile}=await import('node:fs/promises');
  for(const format of ['docx','pdf']){
   const bytes=await generateDocument({templateId:t.id,values:long,format,manifest,templateBytes:await readFile(path.join(root,t[format])),fontBytes:await readFile(path.join(root,t.font)),boldFontBytes:await readFile(path.join(root,t.boldFont))});
-  await writeFile(path.resolve(root,'../autofill-work/qa-generated/endorsement-long.'+format),bytes);
+  const out=path.resolve(root,'development/qa-moa-waiver');await mkdir(out,{recursive:true});
+  await writeFile(path.join(out,'endorsement-long.'+format),bytes);
   if(format==='pdf'){const pdf=await PDFDocument.load(bytes);assert.ok(pdf.getPageCount()>=1&&pdf.getPageCount()<=3,'bounded long-value letter must paginate without excessive pages');assert.equal(pdf.getForm().getFields().length,0);}
  }
 });

@@ -128,3 +128,8 @@ test('MOA PDF acknowledgment uses selected pronouns independently',async()=>{
   assert(text.includes('in '+rp+' capacity as the'));
  }
 });
+test('waiver maps student and guardian pronouns independently with neutral optional defaults',async()=>{
+ for(const [values,student,guardian] of [[fixture,'their','their'],[{...fixture,student_pronouns:'he/him',guardian_pronouns:'she/her'},'his','her']]){
+  const text=docText(await generate('waiver',values));assert(text.includes('due to '+student+' participation'));assert(text.includes(guardian+' ____ ID'));assert(!text.includes('his/her'));
+ }
+});

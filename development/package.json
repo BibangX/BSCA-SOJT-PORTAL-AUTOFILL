@@ -9,7 +9,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test-autofill.mjs",
+    "test": "node --test test-autofill.mjs test-moa-waiver.mjs test-person-fields.mjs test-form-state.mjs",
     "build": "esbuild engine-source.mjs --bundle --format=esm --target=es2020 --minify --outfile=../autofill-engine.js --legal-comments=eof"
   }
 }
