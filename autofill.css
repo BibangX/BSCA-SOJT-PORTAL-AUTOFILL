@@ -32,3 +32,15 @@
 
 .submission-signature-confirmation{display:flex;align-items:flex-start;gap:10px;padding:14px;margin:12px 0;background:#fff5e2;border:1px solid #c6a875;border-radius:8px;line-height:1.5;cursor:pointer;color:#47321e}
 .submission-signature-confirmation input[type=checkbox]{width:20px;height:20px;min-width:20px;flex:0 0 20px;margin:3px 0 0;accent-color:#75502b}
+
+/* Shared reading scale for the level panels. Keep decorative titles on the map. */
+#level-dialog .resource-step-body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.9375rem;line-height:1.5}
+#level-dialog .resource-step-body h4{font-size:1.0625rem;line-height:1.35}
+#level-dialog .resource-step-body :is(.autofill-field,.resource-action,.autofill-remember,.submission-signature-confirmation){font-family:inherit;font-size:.875rem;line-height:1.45}
+#level-dialog .resource-step-body :is(.template-note,.autofill-field small,.autofill-storage-note,.autofill-review-note,.autofill-required-note){font-size:.8125rem;line-height:1.5}
+#level-dialog .autofill-field :is(input:not([type=checkbox]),select,textarea){font-family:inherit;font-size:1rem}
+#level-dialog .submission-signature-confirmation{min-height:44px;box-sizing:border-box;padding:8px 0;margin:2px 0 4px;gap:9px;background:transparent;border:0;font-weight:400}
+#level-dialog .autofill-remember{min-height:44px;align-items:flex-start}
+#level-dialog :is(.autofill-remember,.submission-signature-confirmation) input[type=checkbox]{width:1rem;height:1rem;min-width:1rem;min-height:1rem;flex:0 0 1rem;margin:2px 0 0;padding:0}
+#level-dialog .submission-signature-confirmation:focus-within{outline:2px solid #80551e;outline-offset:2px}
+#level-dialog .resource-submit form+form{margin-top:1rem;padding-top:.75rem;border-top:1px solid #decda5}
