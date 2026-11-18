@@ -45,7 +45,7 @@ export function validateValues(templateId, values, manifest){
 export function downloadFilename(templateId,values,format){
  if(!['docx','pdf'].includes(format))throw Error('Choose Word or PDF.');
  const safe=v=>String(v||'').normalize('NFC').replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g,'_').replace(/\s+/g,'_').replace(/^\.+|\.+$/g,'').slice(0,70);
- return [safe(values.student_number)||'Student',safe(values.student_full_name)||'Document',safe(templateId)||'Template'].join('_')+'.'+format;
+ return [safe(values.student_number)||'Student',safe(values.student_full_name)||'Document',safe(({endorsement:'Endorsement',moa:'MOA',waiver:'LiabilityWaiver',intent:'Intent',company:'CompanyInformation'})[templateId]||templateId)||'Template'].join('_')+'.'+format;
 }
 function displayValues(clean,manifest){return expandPronouns(clean,manifest);}
 function wrapLines(text,font,size,width){

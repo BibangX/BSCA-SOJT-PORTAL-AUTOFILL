@@ -1,0 +1,6 @@
+Extract into your existing public GitHub Pages portal folder containing index.html.
+Google Forms setup (form owner):
+1. Open the editable document submission bin, not the student information form.
+2. In its bound Apps Script project add the code from development/configure-document-bin.gs. Run configureDocumentBin. It adds a required signature confirmation, allows repeat responses, and prints prefilled links without submitting a response.
+3. Copy the execution log's window.SOJT_FORM_LINKS assignment into submission-links.js. Match each key to the exact portal document label from resources.js; retain the generated URL. If a type is missing, add that choice to the form and rerun. Check any form section branching: every document route must reach the required confirmation.
+4. Test with one student account: send a monthly report and a logbook for the same month, verify two response rows, correct types, signature confirmations, and both file links as coordinator. The portal checkbox remains until form enforcement is confirmed.

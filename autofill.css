@@ -25,3 +25,10 @@
 
 .autofill-person-row[hidden]{display:none!important}
 .autofill-duration-note{grid-column:1/-1}
+/* Keep the close control within reach throughout every level. */
+.level-dialog-top{position:sticky;top:-24px;z-index:20;background:#fff5e2;padding:12px 0;box-shadow:0 3px 5px #654a2710}
+.level-dialog-top #close-level{min-height:44px;flex-shrink:0}
+@media(max-width:600px){.level-dialog-top{top:-18px}}
+
+.submission-signature-confirmation{display:flex;align-items:flex-start;gap:10px;padding:14px;margin:12px 0;background:#fff5e2;border:1px solid #c6a875;border-radius:8px;line-height:1.5;cursor:pointer;color:#47321e}
+.submission-signature-confirmation input[type=checkbox]{width:20px;height:20px;min-width:20px;flex:0 0 20px;margin:3px 0 0;accent-color:#75502b}

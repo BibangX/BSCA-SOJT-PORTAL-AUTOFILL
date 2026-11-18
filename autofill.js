@@ -56,6 +56,7 @@ function createView(article){
  const editor=node('div',undefined,'autofill-editor');editor.id='autofill-editor-'+article.id;editor.hidden=true;
  const status=node('p','','autofill-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  section.append(heading,intro,prepare,editor,status);
+ if(workflow){const send=node('a','Send details to coordinator (Google Form)','resource-action secondary');send.href=window.OJT_RESOURCES.informationUrl;send.target='_blank';send.rel='noopener noreferrer';section.append(node('p','To send your details, complete the separate Google Form. Saving here only prepares your documents.','template-note'),send);}
  if(article.id==='preparation'){intro.textContent='Use this only if the coordinator confirms a liability waiver is required. It does not replace parent or guardian consent or medical clearance. Prefill uses saved student and dean details; signatures and notarial entries stay blank.';}
  else if(article.id==='moa'){intro.textContent='Reuse saved company, student and institutional details. Add additional students only when the same MOA covers them. Review, download, and arrange the required signatures and notarization separately.';}
  const body=article.querySelector('.resource-step-body'),submit=article.querySelector('.resource-submit');
@@ -69,7 +70,7 @@ function createView(article){
   if(materials){
    const mapped=[...materials.querySelectorAll('a[download]')].find(link=>link.getAttribute('href')?.split('/').pop()===documentView.blank);
    if(mapped){const oldNote=mapped.nextElementSibling;mapped.textContent='Download blank Word template';alternative.append(mapped);if(oldNote?.classList.contains('template-note'))oldNote.remove();}
-   if(materials.querySelector('a[download]')){materials.classList.add('autofill-other-materials');const title=materials.querySelector('h4');if(title)title.textContent=article.id==='preparation'?'Other pre-deployment requirements':'Internship plan';materials.append(node('p','These documents do not have prefill available yet. Download the template and complete it as instructed.','template-note'));}
+   if(materials.querySelector('a[download],.pending-template')){materials.classList.add('autofill-other-materials');const title=materials.querySelector('h4');if(title)title.textContent=article.id==='preparation'?'Other pre-deployment requirements':'Internship plan';materials.append(node('p','Use the coordinator-approved version for each requirement.','template-note'));}
    else materials.remove();
   }
   section.append(alternative);
