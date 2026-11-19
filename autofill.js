@@ -1,3 +1,4 @@
+import {documentFilename} from './document-names.js';
 import {durationKeys,dateBasis,syncDuration,updateSharedField} from './form-state.js';
 import {people,personDisplayKeys} from './person-fields.js';
 import {applicationStatuses,workflowProgress,companyKeys} from './workflow-model.js';
@@ -214,3 +215,20 @@ function createView(article){
 }
 const dialog=document.getElementById('level-dialog');const content=document.getElementById('level-content');
 if(dialog&&content){const observer=new MutationObserver(mount);observer.observe(content,{childList:true});observer.observe(dialog,{attributes:true,attributeFilter:['open']});mount();}
+
+// Match manual downloads to the same filename used by generated documents.
+document.addEventListener('click',async event=>{
+ const link=event.target.closest?.('#level-content a[download]');if(!link)return;
+ event.preventDefault();
+ try{
+  if(!state.manifest)await loadManifest();
+  const id=new URL(link.href).pathname.split('/').pop().replace(/\.docx$/,'');
+  const filename=documentFilename(id,state.values,'docx',document.querySelector('#reporting-month')?.value);
+  const a=document.createElement('a');a.href=link.href;a.download=filename;document.body.append(a);a.click();a.remove();
+ }catch(error){window.alert(error.message);}
+});
+document.addEventListener('sojt-name-preview',e=>{
+ const {doc,output,month}=e.detail;
+ const render=()=>{try{output.textContent='Signed PDF filename: '+documentFilename(doc,state.values,'pdf',month);}catch(error){output.textContent=error.message;}};
+ if(!state.manifest)loadManifest().then(render).catch(()=>{});else render();
+});

@@ -1,3 +1,5 @@
+import {documentFilename as downloadFilename} from '../document-names.js';
+export {downloadFilename};
 import {expandPronouns} from '../pronoun-values.js';
 import {generateStructuredPdf} from './structured-pdf.mjs';
 import Docxtemplater from 'docxtemplater';
@@ -41,11 +43,6 @@ export function validateValues(templateId, values, manifest){
  }
  if(clean.start_date&&clean.end_date&&clean.end_date<clean.start_date)throw Error('End date must be on or after the start date.');
  return clean;
-}
-export function downloadFilename(templateId,values,format){
- if(!['docx','pdf'].includes(format))throw Error('Choose Word or PDF.');
- const safe=v=>String(v||'').normalize('NFC').replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g,'_').replace(/\s+/g,'_').replace(/^\.+|\.+$/g,'').slice(0,70);
- return [safe(values.student_number)||'Student',safe(values.student_full_name)||'Document',safe(({endorsement:'Endorsement',moa:'MOA',waiver:'LiabilityWaiver',intent:'Intent',company:'CompanyInformation'})[templateId]||templateId)||'Template'].join('_')+'.'+format;
 }
 function displayValues(clean,manifest){return expandPronouns(clean,manifest);}
 function wrapLines(text,font,size,width){
